@@ -1,691 +1,1033 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Staff Blaster</title>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      background-color: #0b0c10;
-      color: #66fcf1;
-      font-family: 'Arial', sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      margin: 0;
-      padding-bottom: 25px;
-    }
-    h1 {
-      color: #ffe81f;
-      text-transform: uppercase;
-      letter-spacing: 4px;
-      margin-bottom: 5px;
-    }
-    #ui-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 700px;
-      margin-bottom: 10px;
-    }
-    .ui-stat {
-      font-size: 1.2rem;
-      font-weight: bold;
-    }
-    #game-container {
-      border: 3px solid #ffe81f;
-      border-radius: 8px;
-      background: #1f2833;
-      box-shadow: 0 0 15px rgba(255, 232, 31, 0.4);
-    }
-    canvas { display: block; }
-    #controls {
-      display: flex;
-      gap: 10px;
-      margin-top: 15px;
-    }
-    button.note-btn {
-      background: #0b0c10;
-      color: #ffe81f;
-      border: 2px solid #ffe81f;
-      padding: 12px 18px;
-      font-size: 1.2rem;
-      font-weight: bold;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    button.note-btn:hover {
-      background: #ffe81f;
-      color: #000;
-    }
-    #start-btn {
-      margin-top: 15px;
-      padding: 10px 20px;
-      font-size: 1rem;
-      background: #ffe81f;
-      color: #000;
-      border: none;
-      font-weight: bold;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    #start-btn:hover {
-      background: #fff;
-    }
-    #mode-container {
-      display: flex;
-      gap: 10px;
-      margin-top: 15px;
-      width: 700px;
-      justify-content: center;
-    }
-    .mode-wrapper {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    button.mode-btn {
-      width: 100%;
-      background: #0b0c10;
-      color: #45a29e;
-      border: 2px solid #45a29e;
-      padding: 8px 12px;
-      font-size: 0.9rem;
-      font-weight: bold;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    button.mode-btn:hover {
-      background: #1f2833;
-    }
-    button.mode-btn.active {
-      background: #45a29e;
-      color: #0b0c10;
-      border-color: #66fcf1;
-      box-shadow: 0 0 8px rgba(102, 252, 241, 0.5);
-    }
-    button.mode-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-    .high-score-label {
-      margin-top: 5px;
-      font-size: 0.8rem;
-      color: #ffe81f;
-      font-weight: bold;
-    }
-    #reset-btn {
-      margin-top: 25px;
-      background: transparent;
-      color: #ff3333;
-      border: 1px solid #ff3333;
-      padding: 6px 14px;
-      font-size: 0.8rem;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    #reset-btn:hover {
-      background: #ff3333;
-      color: #0b0c10;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Master</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 1rem;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        .game-container {
+            position: relative;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 520px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Timer Section Structure */
+        .timer-section {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            min-width: 100px;
+        }
+
+        .timer-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #666;
+            margin-bottom: 3px;
+        }
+
+        /* Solid Progress Bar Container */
+        .timer-bar-container {
+            width: 100px;
+            height: 14px;
+            background-color: #e0e0e0;
+            border-radius: 7px;
+            overflow: hidden;
+            border: 1px solid #ccc;
+        }
+
+        .timer-bar-fill {
+            height: 100%;
+            width: 100%;
+            background-color: #28a745; /* Starts Green */
+            border-radius: 6px;
+            transition: width 0.1s linear, background-color 0.3s ease;
+        }
+
+        .game-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #2c3e50;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .stat-item {
+            min-width: 80px;
+            text-align: right;
+        }
+
+        .lives-container {
+            color: #e74c3c;
+            letter-spacing: 2px;
+            visibility: hidden;
+        }
+
+        #staff-container {
+            width: 100%;
+            height: 180px;
+            margin: 0.5rem 0;
+            background: #fff;
+        }
+
+        #staff {
+            pointer-events: none;
+        }
+
+        .controls-area {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            width: 100%;
+        }
+
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+        }
+
+        .note-btn {
+            padding: 12px 0;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border: 2px solid #007bff;
+            background: #007bff;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s, transform 0.1s;
+        }
+
+        .note-btn:active {
+            transform: scale(0.95);
+        }
+
+        .note-btn:disabled {
+            background: #ccc;
+            border-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .note-btn.btn-correct {
+            background-color: #28a745 !important;
+            border-color: #28a745 !important;
+        }
+
+        .note-btn.btn-incorrect {
+            background-color: #dc3545 !important;
+            border-color: #dc3545 !important;
+            cursor: not-allowed;
+        }
+
+        #start-btn, .modal-btn {
+            padding: 10px 24px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 0.5rem auto;
+            align-self: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.2;
+        }
+
+        #start-btn .btn-subtext {
+            font-size: 0.75rem;
+            font-weight: normal;
+            opacity: 0.9;
+            margin-top: 3px;
+        }
+
+        #start-btn:hover, .modal-btn:hover {
+            background: #218838;
+        }
+
+        .mode-container {
+            border-top: 1px solid #eee;
+            padding-top: 0.75rem;
+        }
+
+        .mode-label {
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #666;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .mode-row {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .mode-card {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .mode-btn {
+            width: 100%;
+            padding: 8px 2px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 1.5px solid #6c757d;
+            background: white;
+            color: #6c757d;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .mode-btn.active {
+            background: #6c757d;
+            color: white;
+        }
+
+        .high-score-tag {
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        .instructions-group {
+            margin-top: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .instructions-main {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #444;
+            margin: 0;
+        }
+
+        .instructions {
+            font-size: 0.85rem;
+            color: #666;
+            margin: 0;
+        }
+
+        /* Redesigned Reset High Scores Button */
+        .reset-score-btn {
+            background: #fff;
+            border: 1.5px solid #dc3545;
+            color: #dc3545;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border-radius: 6px;
+            padding: 6px 14px;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            align-self: center;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .reset-score-btn:hover {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        /* In-Game Modal Overlays */
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.96);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 100;
+            border-radius: 12px;
+            padding: 1rem;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-character-box {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+
+        .modal-score {
+            font-size: 1.15rem;
+            color: #555;
+            margin-bottom: 0.25rem;
+        }
+
+        .modal-highscore-notice {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #28a745;
+            margin-bottom: 0.5rem;
+            min-height: 1.5rem;
+        }
+
+        .modal-subtitle {
+            font-size: 0.95rem;
+            color: #666;
+            margin-bottom: 1.25rem;
+            max-width: 80%;
+            line-height: 1.4;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .modal-btn-cancel {
+            background: #6c757d;
+        }
+
+        .modal-btn-cancel:hover {
+            background: #5a6268;
+        }
+
+        .modal-btn-confirm {
+            background: #dc3545;
+        }
+
+        .modal-btn-confirm:hover {
+            background: #c82333;
+        }
+    </style>
 </head>
 <body>
 
-  <h1>Staff Blaster</h1>
-  
-  <div id="ui-top">
-    <div class="ui-stat">Score: <span id="score">0</span></div>
-    <div class="ui-stat">Lives: <span id="lives">3</span></div>
-  </div>
-
-  <div id="game-container">
-    <canvas id="gameCanvas" width="700" height="300"></canvas>
-  </div>
-
-  <div id="controls">
-    <button class="note-btn" onclick="guessNote('A')">A</button>
-    <button class="note-btn" onclick="guessNote('B')">B</button>
-    <button class="note-btn" onclick="guessNote('C')">C</button>
-    <button class="note-btn" onclick="guessNote('D')">D</button>
-    <button class="note-btn" onclick="guessNote('E')">E</button>
-    <button class="note-btn" onclick="guessNote('F')">F</button>
-    <button class="note-btn" onclick="guessNote('G')">G</button>
-  </div>
-
-  <button id="start-btn" onclick="startGame()">Start / Restart Game</button>
-
-  <div id="mode-container">
-    <div class="mode-wrapper">
-      <button class="mode-btn" onclick="selectMode('spaces')">Spaces (F-A-C-E)</button>
-      <div class="high-score-label">High Score: <span id="hs-spaces">0</span></div>
+<div class="game-container">
+    <div class="stats">
+        <div class="timer-section">
+            <div class="timer-label">Timer</div>
+            <div class="timer-bar-container">
+                <div id="timer-bar" class="timer-bar-fill"></div>
+            </div>
+        </div>
+        <div class="game-title">Staff Master</div>
+        <div class="stat-item">Score: <span id="score">0</span></div>
     </div>
-    <div class="mode-wrapper">
-      <button class="mode-btn" onclick="selectMode('lines')">Lines (E-G-B-D-F)</button>
-      <div class="high-score-label">High Score: <span id="hs-lines">0</span></div>
+    
+    <div id="lives-container" class="lives-container">Lives: <span id="lives">❤️❤️❤️</span></div>
+
+    <div id="staff-container">
+        <svg id="staff" viewBox="0 0 330 160" width="100%" height="100%">
+            <!-- Staff Lines -->
+            <line x1="20" y1="40" x2="230" y2="40" stroke="#333" stroke-width="2"/>
+            <line x1="20" y1="60" x2="230" y2="60" stroke="#333" stroke-width="2"/>
+            <line x1="20" y1="80" x2="230" y2="80" stroke="#333" stroke-width="2"/>
+            <line x1="20" y1="100" x2="230" y2="100" stroke="#333" stroke-width="2"/>
+            <line x1="20" y1="120" x2="230" y2="120" stroke="#333" stroke-width="2"/>
+            
+            <!-- Dynamic Note Group -->
+            <g id="note-group"></g>
+
+            <!-- Slingshot Projectile Pebble -->
+            <circle id="pebble" cx="284" cy="80" r="4" fill="#333" style="display: none;" />
+
+            <!-- Character Group -->
+            <g id="character" transform="translate(277, 45)">
+                <!-- Back Leg -->
+                <rect x="22" y="70" width="6" height="20" fill="#f1c27d" />
+                <rect x="20" y="90" width="10" height="5" rx="2" fill="#333" />
+                <!-- Shorts -->
+                <path d="M 12 55 L 32 55 L 35 72 L 25 72 L 22 65 L 19 72 L 9 72 Z" fill="#2980b9" />
+                <!-- Front Leg -->
+                <rect x="11" y="70" width="6" height="20" fill="#f1c27d" />
+                <rect x="7" y="90" width="10" height="5" rx="2" fill="#333" />
+
+                <!-- T-Shirt & Body -->
+                <path d="M 12 30 L 32 30 L 34 57 L 10 57 Z" fill="#e74c3c" />
+
+                <!-- Head & Face -->
+                <circle cx="22" cy="20" r="11" fill="#f1c27d" />
+                <!-- Eye -->
+                <circle cx="17" cy="19" r="1.5" fill="#333" />
+                <!-- Backwards Ball Cap -->
+                <path d="M 11 19 A 11 11 0 0 1 33 19 Z" fill="#f39c12" />
+                <path d="M 33 19 L 43 21 L 33 23 Z" fill="#e67e22" />
+
+                <!-- Slingshot Arm & Rubber Bands -->
+                <g id="slingshot-arm">
+                    <path d="M 2 30 L 7 42 M 7 42 L 7 50 M 7 42 L 12 30" stroke="#795548" stroke-width="2.5" stroke-linecap="round" />
+                    <path d="M 20 35 L 7 42" stroke="#f1c27d" stroke-width="4" stroke-linecap="round" />
+                    <line id="band1" x1="2" y1="30" x2="22" y2="35" stroke="#333" stroke-width="1.2" />
+                    <line id="band2" x1="12" y1="30" x2="22" y2="35" stroke="#333" stroke-width="1.2" />
+                    <path id="pull-arm" d="M 22 35 L 22 35" stroke="#f1c27d" stroke-width="4" stroke-linecap="round" />
+                </g>
+            </g>
+        </svg>
     </div>
-    <div class="mode-wrapper">
-      <button class="mode-btn" onclick="selectMode('lines_spaces')">Lines & Spaces</button>
-      <div class="high-score-label">High Score: <span id="hs-lines_spaces">0</span></div>
+
+    <div class="controls-area">
+        <button id="start-btn">
+            <span>Start</span>
+            <span class="btn-subtext">Press Space</span>
+        </button>
+
+        <div class="button-grid">
+            <button class="note-btn" data-note="A" disabled>A</button>
+            <button class="note-btn" data-note="B" disabled>B</button>
+            <button class="note-btn" data-note="C" disabled>C</button>
+            <button class="note-btn" data-note="D" disabled>D</button>
+            <button class="note-btn" data-note="E" disabled>E</button>
+            <button class="note-btn" data-note="F" disabled>F</button>
+            <button class="note-btn" data-note="G" disabled>G</button>
+        </div>
+
+        <div class="instructions-group">
+            <p class="instructions-main">Correctly name as many notes as you can in 30 seconds!</p>
+            <p class="instructions">Click the buttons or press keys <strong>A–G</strong> on your keyboard.</p>
+        </div>
+
+        <div class="mode-container">
+            <div class="mode-label">Select Game Mode</div>
+            <div class="mode-row">
+                <div class="mode-card">
+                    <button class="mode-btn" data-mode="spaces">Spaces</button>
+                    <div class="high-score-tag">Best: <span id="hs-spaces">0</span></div>
+                </div>
+                <div class="mode-card">
+                    <button class="mode-btn" data-mode="lines">Lines</button>
+                    <div class="high-score-tag">Best: <span id="hs-lines">0</span></div>
+                </div>
+                <div class="mode-card">
+                    <button class="mode-btn" data-mode="lines-spaces">Lines & Spaces</button>
+                    <div class="high-score-tag">Best: <span id="hs-lines-spaces">0</span></div>
+                </div>
+                <div class="mode-card">
+                    <button class="mode-btn active" data-mode="all">All</button>
+                    <div class="high-score-tag">Best: <span id="hs-all">0</span></div>
+                </div>
+            </div>
+        </div>
+        
+        <button id="reset-high-scores-btn" class="reset-score-btn">Reset High Scores</button>
     </div>
-    <div class="mode-wrapper">
-      <button class="mode-btn active" onclick="selectMode('all')">All</button>
-      <div class="high-score-label">High Score: <span id="hs-all">0</span></div>
+
+    <!-- Game End Modal Overlay -->
+    <div id="game-modal" class="modal-overlay">
+        <div id="modal-char-box" class="modal-character-box"></div>
+        <div id="modal-title" class="modal-title">Game Over!</div>
+        <div id="modal-score" class="modal-score">Final Score: 0</div>
+        <div id="modal-highscore-notice" class="modal-highscore-notice"></div>
+        <button id="modal-return-btn" class="modal-btn">Return</button>
     </div>
-  </div>
 
-  <button id="reset-btn" onclick="resetHighScores()">Reset High Scores</button>
+    <!-- Confirm Reset High Scores Modal Overlay -->
+    <div id="confirm-reset-modal" class="modal-overlay">
+        <div class="modal-title">Reset High Scores?</div>
+        <div class="modal-subtitle">Are you sure you want to reset your high scores? This can't be undone.</div>
+        <div class="modal-actions">
+            <button id="reset-cancel-btn" class="modal-btn modal-btn-cancel">Cancel</button>
+            <button id="reset-confirm-btn" class="modal-btn modal-btn-confirm">Reset</button>
+        </div>
+    </div>
+</div>
 
-  <script>
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
-
-    // Spaceship position (Centered)
-    const SHIP_X = canvas.width / 2; // 350px
-    // Target Line position (Left side)
-    const TARGET_LINE_X = 80;
-
-    // High Scores Storage
-    const highScores = {
-      spaces: parseInt(localStorage.getItem('sb_hs_spaces')) || 0,
-      lines: parseInt(localStorage.getItem('sb_hs_lines')) || 0,
-      lines_spaces: parseInt(localStorage.getItem('sb_hs_lines_spaces')) || 0,
-      all: parseInt(localStorage.getItem('sb_hs_all')) || 0
-    };
-
-    function updateHighScoreUI() {
-      for (const mode in highScores) {
-        const elem = document.getElementById(`hs-${mode}`);
-        if (elem) elem.innerText = highScores[mode];
-      }
-    }
-
-    function resetHighScores() {
-      const confirmed = confirm("Are you sure you want to reset your High Scores? This can't be undone");
-      if (confirmed) {
-        for (const mode in highScores) {
-          highScores[mode] = 0;
-          localStorage.removeItem(`sb_hs_${mode}`);
-        }
-        updateHighScoreUI();
-      }
-    }
-
-    // --- WEB AUDIO SYNTHESIZER ---
-    let audioCtx = null;
-
-    function initAudio() {
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
-    }
-
-    function playLaserSound() {
-      if (!audioCtx) return;
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = 'sawtooth';
-      
-      const now = audioCtx.currentTime;
-      osc.frequency.setValueAtTime(800, now);
-      osc.frequency.exponentialRampToValueAtTime(100, now + 0.15);
-
-      gain.gain.setValueAtTime(0.3, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
-
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-
-      osc.start(now);
-      osc.stop(now + 0.15);
-    }
-
-    function playLifeUpSound() {
-      if (!audioCtx) return;
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = 'sine';
-
-      const now = audioCtx.currentTime;
-      osc.frequency.setValueAtTime(523.25, now);
-      osc.frequency.setValueAtTime(659.25, now + 0.1);
-      osc.frequency.setValueAtTime(783.99, now + 0.2);
-
-      gain.gain.setValueAtTime(0.3, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
-
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-
-      osc.start(now);
-      osc.stop(now + 0.35);
-    }
-
-    function playErrorSound() {
-      if (!audioCtx) return;
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = 'square';
-      
-      const now = audioCtx.currentTime;
-      osc.frequency.setValueAtTime(150, now);
-      osc.frequency.linearRampToValueAtTime(80, now + 0.2);
-
-      gain.gain.setValueAtTime(0.2, now);
-      gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
-
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-
-      osc.start(now);
-      osc.stop(now + 0.2);
-    }
-
-    function playExplosionSound() {
-      if (!audioCtx) return;
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = 'sawtooth';
-
-      const now = audioCtx.currentTime;
-      osc.frequency.setValueAtTime(120, now);
-      osc.frequency.exponentialRampToValueAtTime(20, now + 0.5);
-
-      gain.gain.setValueAtTime(0.5, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
-
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-
-      osc.start(now);
-      osc.stop(now + 0.5);
-    }
-
-    // --- GAME DATA ---
+<script>
+    const TOTAL_TIME = 30;
     const ALL_NOTES = [
-      { name: 'C', y: 200, ledger: true,  type: 'below' }, // Middle C
-      { name: 'D', y: 190, ledger: false, type: 'below' }, // Space below
-      { name: 'E', y: 180, ledger: false, type: 'line' },  // Bottom line
-      { name: 'F', y: 170, ledger: false, type: 'space' }, // 1st space
-      { name: 'G', y: 160, ledger: false, type: 'line' },  // 2nd line
-      { name: 'A', y: 150, ledger: false, type: 'space' }, // 2nd space
-      { name: 'B', y: 140, ledger: false, type: 'line' },  // 3rd line
-      { name: 'C', y: 130, ledger: false, type: 'space' }, // 3rd space
-      { name: 'D', y: 120, ledger: false, type: 'line' },  // 4th line
-      { name: 'E', y: 110, ledger: false, type: 'space' }, // 4th space
-      { name: 'F', y: 100, ledger: false, type: 'line' },  // Top line
-      { name: 'G', y: 90,  ledger: false, type: 'above' }, // Space above
-      { name: 'A', y: 80,  ledger: true,  type: 'above' }  // Ledger line A
+        { name: 'C', y: 140, ledger: true,  tags: ['all'] },              
+        { name: 'D', y: 130, ledger: false, tags: ['all'] },              
+        { name: 'E', y: 120, ledger: false, tags: ['all', 'lines', 'lines-spaces'] }, 
+        { name: 'F', y: 110, ledger: false, tags: ['all', 'spaces', 'lines-spaces'] },
+        { name: 'G', y: 100, ledger: false, tags: ['all', 'lines', 'lines-spaces'] }, 
+        { name: 'A', y: 90,  ledger: false, tags: ['all', 'spaces', 'lines-spaces'] },
+        { name: 'B', y: 80,  ledger: false, tags: ['all', 'lines', 'lines-spaces'] }, 
+        { name: 'C', y: 70,  ledger: false, tags: ['all', 'spaces', 'lines-spaces'] },
+        { name: 'D', y: 60,  ledger: false, tags: ['all', 'lines', 'lines-spaces'] }, 
+        { name: 'E', y: 50,  ledger: false, tags: ['all', 'spaces', 'lines-spaces'] },
+        { name: 'F', y: 40,  ledger: false, tags: ['all', 'lines', 'lines-spaces'] }, 
+        { name: 'G', y: 30,  ledger: false, tags: ['all'] },              
+        { name: 'A', y: 20,  ledger: true,  tags: ['all'] }               
     ];
 
-    let selectedMode = 'all';
-    let activeNotes = [];
+    let currentMode = 'all';
+    let activeNotes = ALL_NOTES;
     let currentNote = null;
     let score = 0;
     let lives = 3;
-    let speed = 0.8;
-    let gameActive = false;
-    let animId = null;
-    let flashRed = false;
-    let laserBeam = null;
+    let timeLeft = TOTAL_TIME;
+    let gameInterval = null;
+    let isPlaying = false;
+    let audioCtx = null;
+    let isAnimating = false;
 
-    let wobbleFrames = 0;
-    let isExploded = false;
-    let explosionParticles = [];
-    let lifeUpTexts = [];
+    const highScores = {
+        'spaces': 0,
+        'lines': 0,
+        'lines-spaces': 0,
+        'all': 0
+    };
 
-    function selectMode(mode) {
-      if (gameActive) return;
-      selectedMode = mode;
+    const timerBar = document.getElementById('timer-bar');
+    const scoreEl = document.getElementById('score');
+    const livesEl = document.getElementById('lives');
+    const livesContainer = document.getElementById('lives-container');
+    const startBtn = document.getElementById('start-btn');
+    const noteBtns = document.querySelectorAll('.note-btn');
+    const modeBtns = document.querySelectorAll('.mode-btn');
+    const noteGroup = document.getElementById('note-group');
+    const pebble = document.getElementById('pebble');
+    const band1 = document.getElementById('band1');
+    const band2 = document.getElementById('band2');
+    const pullArm = document.getElementById('pull-arm');
+    const resetHighScoresBtn = document.getElementById('reset-high-scores-btn');
 
-      const buttons = document.querySelectorAll('.mode-btn');
-      buttons.forEach(btn => {
-        if (btn.getAttribute('onclick').includes(`'${mode}'`)) {
-          btn.classList.add('active');
+    // Modals
+    const modal = document.getElementById('game-modal');
+    const modalCharBox = document.getElementById('modal-char-box');
+    const modalTitle = document.getElementById('modal-title');
+    const modalScore = document.getElementById('modal-score');
+    const modalHighscoreNotice = document.getElementById('modal-highscore-notice');
+    const modalReturnBtn = document.getElementById('modal-return-btn');
+
+    const confirmResetModal = document.getElementById('confirm-reset-modal');
+    const resetCancelBtn = document.getElementById('reset-cancel-btn');
+    const resetConfirmBtn = document.getElementById('reset-confirm-btn');
+
+    const SAD_BOY_SVG = `
+        <svg viewBox="0 0 100 120" width="100%" height="100%">
+            <rect x="36" y="80" width="9" height="24" fill="#f1c27d" />
+            <rect x="33" y="104" width="14" height="6" rx="3" fill="#333" />
+            <rect x="55" y="80" width="9" height="24" fill="#f1c27d" />
+            <rect x="53" y="104" width="14" height="6" rx="3" fill="#333" />
+            <path d="M 32 66 L 68 66 L 70 85 L 53 85 L 50 78 L 47 85 L 30 85 Z" fill="#2980b9" />
+            <path d="M 32 38 L 68 38 L 69 68 L 31 68 Z" fill="#e74c3c" />
+            <path d="M 32 40 L 22 68" stroke="#f1c27d" stroke-width="7" stroke-linecap="round" />
+            <path d="M 68 40 L 78 68" stroke="#f1c27d" stroke-width="7" stroke-linecap="round" />
+            <circle cx="50" cy="28" r="16" fill="#f1c27d" />
+            <path d="M 40 25 L 47 28" stroke="#333" stroke-width="2" stroke-linecap="round" />
+            <path d="M 60 25 L 53 28" stroke="#333" stroke-width="2" stroke-linecap="round" />
+            <path d="M 44 35 Q 50 30 56 35" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round" />
+            <path d="M 58 29 Q 58 33 56 34 Q 54 33 58 29" fill="#3498db" />
+            <path d="M 33 26 A 17 17 0 0 1 67 26 Z" fill="#f39c12" />
+            <path d="M 66 26 L 80 30 L 66 32 Z" fill="#e67e22" />
+        </svg>
+    `;
+
+    const PROUD_BOY_SVG = `
+        <svg viewBox="0 0 100 120" width="100%" height="100%">
+            <path d="M 15 20 L 17 25 L 22 25 L 18 28 L 20 33 L 15 30 L 10 33 L 12 28 L 8 25 L 13 25 Z" fill="#f1c40f" />
+            <path d="M 85 20 L 87 25 L 92 25 L 88 28 L 90 33 L 85 30 L 80 33 L 82 28 L 78 25 L 83 25 Z" fill="#f1c40f" />
+            <rect x="34" y="78" width="9" height="26" fill="#f1c27d" />
+            <rect x="30" y="104" width="15" height="6" rx="3" fill="#333" />
+            <rect x="57" y="78" width="9" height="26" fill="#f1c27d" />
+            <rect x="55" y="104" width="15" height="6" rx="3" fill="#333" />
+            <path d="M 30 64 L 70 64 L 72 82 L 54 82 L 50 75 L 46 82 L 28 82 Z" fill="#2980b9" />
+            <path d="M 30 35 L 70 35 L 71 66 L 29 66 Z" fill="#e74c3c" />
+            <path d="M 30 37 L 18 50 L 30 58" stroke="#f1c27d" stroke-width="6" fill="none" stroke-linecap="round" />
+            <path d="M 70 37 L 85 20" stroke="#f1c27d" stroke-width="6" stroke-linecap="round" />
+            <circle cx="87" cy="18" r="4" fill="#f1c27d" />
+            <path d="M 87 18 L 86 10 M 89 18 L 93 11" stroke="#f1c27d" stroke-width="2.5" stroke-linecap="round" />
+            <circle cx="50" cy="24" r="16" fill="#f1c27d" />
+            <path d="M 41 21 Q 45 17 48 21" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round" />
+            <path d="M 52 21 Q 55 17 59 21" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round" />
+            <path d="M 42 27 Q 50 37 58 27 Z" fill="#e74c3c" stroke="#333" stroke-width="1.5" />
+            <path d="M 33 22 A 17 17 0 0 1 67 22 Z" fill="#f39c12" />
+            <path d="M 67 22 L 81 25 L 67 28 Z" fill="#e67e22" />
+        </svg>
+    `;
+
+    function updateTimerBar(timeRemaining) {
+        const percentage = Math.max(0, (timeRemaining / TOTAL_TIME) * 100);
+        timerBar.style.width = `${percentage}%`;
+
+        if (timeRemaining <= 10) {
+            timerBar.style.backgroundColor = '#dc3545';
+        } else if (timeRemaining <= 20) {
+            timerBar.style.backgroundColor = '#ffc107';
         } else {
-          btn.classList.remove('active');
+            timerBar.style.backgroundColor = '#28a745';
         }
-      });
     }
 
-    function updateActiveNotes() {
-      if (selectedMode === 'spaces') {
-        activeNotes = ALL_NOTES.filter(n => n.type === 'space');
-      } else if (selectedMode === 'lines') {
-        activeNotes = ALL_NOTES.filter(n => n.type === 'line');
-      } else if (selectedMode === 'lines_spaces') {
-        activeNotes = ALL_NOTES.filter(n => n.type === 'line' || n.type === 'space');
-      } else {
-        activeNotes = ALL_NOTES;
-      }
+    function loadHighScores() {
+        const savedScores = localStorage.getItem('note_game_highscores');
+        if (savedScores) {
+            try {
+                const parsed = JSON.parse(savedScores);
+                Object.assign(highScores, parsed);
+            } catch (e) {
+                console.error("Could not parse saved high scores", e);
+            }
+        }
+        updateHighScoreUI();
     }
 
-    function setModeButtonsDisabled(disabled) {
-      const buttons = document.querySelectorAll('.mode-btn');
-      buttons.forEach(btn => btn.disabled = disabled);
-    }
-
-    function spawnNote() {
-      const idx = Math.floor(Math.random() * activeNotes.length);
-      currentNote = { ...activeNotes[idx], x: canvas.width - 30 };
-    }
-
-    function createExplosion() {
-      explosionParticles = [];
-      for (let i = 0; i < 30; i++) {
-        explosionParticles.push({
-          x: SHIP_X,
-          y: 260,
-          vx: (Math.random() - 0.5) * 8,
-          vy: (Math.random() - 0.5) * 8,
-          color: ['#ffe81f', '#ff3333', '#66fcf1', '#ffffff'][Math.floor(Math.random() * 4)],
-          size: Math.random() * 6 + 2,
-          alpha: 1.0
+    function updateHighScoreUI() {
+        Object.keys(highScores).forEach(mode => {
+            const hsElement = document.getElementById(`hs-${mode}`);
+            if (hsElement) {
+                hsElement.textContent = highScores[mode];
+            }
         });
-      }
     }
 
-    function triggerLifeUp() {
-      lives += 1;
-      document.getElementById('lives').innerText = lives;
-      playLifeUpSound();
-      
-      lifeUpTexts.push({
-        x: canvas.width - 50,
-        y: 35,
-        alpha: 1.0
-      });
+    function checkAndUpdateHighScore(currentMode, score) {
+        if (score > highScores[currentMode]) {
+            highScores[currentMode] = score;
+            localStorage.setItem('note_game_highscores', JSON.stringify(highScores));
+            updateHighScoreUI();
+            return true;
+        }
+        return false;
+    }
+
+    function performResetHighScores() {
+        Object.keys(highScores).forEach(mode => {
+            highScores[mode] = 0;
+        });
+        localStorage.removeItem('note_game_highscores');
+        updateHighScoreUI();
+        confirmResetModal.classList.remove('active');
+    }
+
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+    }
+
+    function playSound(type) {
+        if (!audioCtx) return;
+        const now = audioCtx.currentTime;
+
+        if (type === 'correct') {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(523.25, now);
+            osc.frequency.setValueAtTime(659.25, now + 0.08);
+            gain.gain.setValueAtTime(0.15, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+            osc.start(now);
+            osc.stop(now + 0.25);
+        } else if (type === 'incorrect') {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(130.81, now);
+            gain.gain.setValueAtTime(0.2, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+            osc.start(now);
+            osc.stop(now + 0.2);
+        } else if (type === 'victory') {
+            const notes = [261.63, 329.63, 392.00, 523.25];
+            notes.forEach((freq, i) => {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.type = 'triangle';
+                const noteTime = now + (i * 0.12);
+                const duration = i === 3 ? 0.6 : 0.12;
+                osc.frequency.setValueAtTime(freq, noteTime);
+                gain.gain.setValueAtTime(0.2, noteTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, noteTime + duration);
+                osc.start(noteTime);
+                osc.stop(noteTime + duration);
+            });
+        } else if (type === 'gameover') {
+            const notes = [196.00, 155.56, 130.81];
+            notes.forEach((freq, i) => {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.type = 'sawtooth';
+                const noteTime = now + (i * 0.22);
+                const duration = i === 2 ? 0.8 : 0.22;
+                osc.frequency.setValueAtTime(freq, noteTime);
+                if (i === 2) {
+                    osc.frequency.exponentialRampToValueAtTime(110.00, noteTime + duration);
+                }
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, noteTime + duration);
+                osc.start(noteTime);
+                osc.stop(noteTime + duration);
+            });
+        }
+    }
+
+    function shootSlingshot(targetY, onHitCallback, isMiss = false) {
+        isAnimating = true;
+        band1.setAttribute('x2', '32');
+        band1.setAttribute('y2', '35');
+        band2.setAttribute('x2', '32');
+        band2.setAttribute('y2', '35');
+        pullArm.setAttribute('d', 'M 22 35 L 32 35');
+
+        setTimeout(() => {
+            band1.setAttribute('x2', '7');
+            band1.setAttribute('y2', '35');
+            band2.setAttribute('x2', '7');
+            band2.setAttribute('y2', '35');
+            pullArm.setAttribute('d', 'M 22 35 L 12 35');
+
+            const startX = 284;
+            const startY = 80;
+            
+            const targetX = isMiss ? -20 : 130;
+            const missOffsetY = targetY > 80 ? -35 : 35;
+            const finalTargetY = isMiss ? targetY + missOffsetY : targetY;
+
+            pebble.setAttribute('cx', startX);
+            pebble.setAttribute('cy', startY);
+            pebble.style.display = 'block';
+
+            const startTime = performance.now();
+            const duration = isMiss ? 200 : 120;
+
+            function animatePebble(time) {
+                const elapsed = time - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+
+                const currentX = startX + (targetX - startX) * progress;
+                const currentY = startY + (finalTargetY - startY) * progress;
+
+                pebble.setAttribute('cx', currentX);
+                pebble.setAttribute('cy', currentY);
+
+                if (progress < 1) {
+                    requestAnimationFrame(animatePebble);
+                } else {
+                    pebble.style.display = 'none';
+                    pullArm.setAttribute('d', 'M 22 35 L 22 35');
+                    band1.setAttribute('x2', '22');
+                    band1.setAttribute('y2', '35');
+                    band2.setAttribute('x2', '22');
+                    band2.setAttribute('y2', '35');
+                    isAnimating = false;
+                    if (onHitCallback) onHitCallback();
+                }
+            }
+
+            requestAnimationFrame(animatePebble);
+        }, 80);
+    }
+
+    function updateLivesDisplay() {
+        livesEl.textContent = '❤️'.repeat(lives);
+    }
+
+    function disableButtons() {
+        noteBtns.forEach(btn => {
+            btn.disabled = true;
+            btn.classList.remove('btn-correct', 'btn-incorrect');
+        });
+    }
+
+    function resetButtons() {
+        noteBtns.forEach(btn => {
+            btn.disabled = false;
+            btn.classList.remove('btn-correct', 'btn-incorrect');
+        });
+    }
+
+    function filterNotesByMode(mode) {
+        return ALL_NOTES.filter(note => note.tags.includes(mode));
+    }
+
+    function resetToInitialState() {
+        modal.classList.remove('active');
+        confirmResetModal.classList.remove('active');
+        isPlaying = false;
+        isAnimating = false;
+        
+        score = 0;
+        lives = 3;
+        timeLeft = TOTAL_TIME;
+        
+        scoreEl.textContent = score;
+        updateTimerBar(TOTAL_TIME);
+        updateLivesDisplay();
+        
+        livesContainer.style.visibility = 'hidden';
+        startBtn.style.display = 'flex';
+        
+        disableButtons();
+        noteGroup.innerHTML = '';
+        currentNote = null;
     }
 
     function startGame() {
-      initAudio();
-      updateActiveNotes();
-      
-      if (animId) {
-        cancelAnimationFrame(animId);
-        animId = null;
-      }
-      score = 0;
-      lives = 3;
-      speed = 0.8;
-      gameActive = true;
-      flashRed = false;
-      laserBeam = null;
-      wobbleFrames = 0;
-      isExploded = false;
-      explosionParticles = [];
-      lifeUpTexts = [];
-      
-      document.getElementById('score').innerText = score;
-      document.getElementById('lives').innerText = lives;
-      setModeButtonsDisabled(true);
-      
-      spawnNote();
-      gameLoop();
-    }
-
-    function loseLife() {
-      playErrorSound();
-      lives--;
-      document.getElementById('lives').innerText = lives;
-      flashRed = true;
-      wobbleFrames = 15;
-
-      if (lives <= 0) {
-        gameActive = false;
-        isExploded = true;
-        setModeButtonsDisabled(false);
-        playExplosionSound();
-        createExplosion();
-
-        // Highscore Logic
-        let newRecord = false;
-        if (score > highScores[selectedMode]) {
-          highScores[selectedMode] = score;
-          localStorage.setItem(`sb_hs_${selectedMode}`, score);
-          updateHighScoreUI();
-          newRecord = true;
-        }
+        if (isPlaying || confirmResetModal.classList.contains('active')) return;
+        initAudio();
+        modal.classList.remove('active');
+        confirmResetModal.classList.remove('active');
         
-        setTimeout(() => {
-          if (newRecord) {
-            alert(`NEW HIGH SCORE for ${selectedMode.toUpperCase()}! Final Score: ${score}`);
-          } else {
-            alert(`Game Over! Final Score: ${score}`);
-          }
-        }, 600);
-      }
-    }
-
-    function guessNote(letter) {
-      initAudio();
-      if (!gameActive || !currentNote) return;
-
-      if (currentNote.name === letter) {
-        playLaserSound();
+        score = 0;
+        lives = 3;
+        timeLeft = TOTAL_TIME;
+        isPlaying = true;
+        isAnimating = false;
         
-        laserBeam = {
-          startX: SHIP_X,
-          startY: 255,
-          endX: currentNote.x,
-          endY: currentNote.y,
-          life: 8
-        };
-
-        score += 1;
+        scoreEl.textContent = score;
+        updateTimerBar(timeLeft);
+        updateLivesDisplay();
         
-        if (score % 10 === 0) {
-          triggerLifeUp();
-          speed += 0.3;
-        }
+        livesContainer.style.visibility = 'visible';
+        startBtn.style.display = 'none';
 
-        document.getElementById('score').innerText = score;
+        resetButtons();
         spawnNote();
-      } else {
-        loseLife();
-      }
+
+        gameInterval = setInterval(() => {
+            timeLeft--;
+            updateTimerBar(timeLeft);
+            if (timeLeft <= 0) {
+                endGame("victory");
+            }
+        }, 1000);
     }
 
-    function drawSpaceship() {
-      if (isExploded) return;
-
-      ctx.save();
-      
-      let xOffset = 0;
-      let rotation = 0;
-      if (wobbleFrames > 0) {
-        xOffset = Math.sin(wobbleFrames * 0.8) * 6;
-        rotation = Math.sin(wobbleFrames * 0.8) * 0.2;
-        wobbleFrames--;
-      }
-
-      ctx.translate(SHIP_X + xOffset, 260);
-      ctx.rotate(rotation);
-
-      // Wings
-      ctx.fillStyle = '#45a29e';
-      ctx.beginPath();
-      ctx.moveTo(-20, 15);
-      ctx.lineTo(0, -10);
-      ctx.lineTo(20, 15);
-      ctx.closePath();
-      ctx.fill();
-
-      // Cockpit Body
-      ctx.fillStyle = '#66fcf1';
-      ctx.beginPath();
-      ctx.moveTo(-8, 12);
-      ctx.lineTo(0, -18);
-      ctx.lineTo(8, 12);
-      ctx.closePath();
-      ctx.fill();
-
-      // Cannon Tip
-      ctx.fillStyle = '#ffe81f';
-      ctx.fillRect(-2, -22, 4, 6);
-
-      // Engine Glow
-      ctx.fillStyle = '#ff3333';
-      ctx.fillRect(-5, 15, 10, 4);
-
-      ctx.restore();
-    }
-
-    function updateAndDrawExplosion() {
-      explosionParticles.forEach((p) => {
-        p.x += p.vx;
-        p.y += p.vy;
-        p.alpha -= 0.02;
-
-        if (p.alpha > 0) {
-          ctx.save();
-          ctx.globalAlpha = p.alpha;
-          ctx.fillStyle = p.color;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.restore();
-        }
-      });
-    }
-
-    function updateAndDrawLifeUpText() {
-      lifeUpTexts.forEach((t) => {
-        t.y += 0.3;
-        t.alpha -= 0.007;
-
-        if (t.alpha > 0) {
-          ctx.save();
-          ctx.globalAlpha = t.alpha;
-          ctx.fillStyle = '#ffe81f';
-          ctx.font = 'bold 24px Arial';
-          ctx.textAlign = 'right';
-          ctx.shadowColor = '#ffe81f';
-          ctx.shadowBlur = 8;
-          ctx.fillText('+1 Life!', t.x, t.y);
-          ctx.restore();
-        }
-      });
-
-      lifeUpTexts = lifeUpTexts.filter(t => t.alpha > 0);
-    }
-
-    function drawBoard() {
-      if (flashRed) {
-        ctx.fillStyle = '#8b0000';
-        flashRed = false;
-      } else {
-        ctx.fillStyle = '#1f2833';
-      }
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      // Staff lines
-      ctx.strokeStyle = '#ffffff';
-      ctx.lineWidth = 2;
-      const lines = [100, 120, 140, 160, 180];
-      lines.forEach(y => {
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(canvas.width, y);
-        ctx.stroke();
-      });
-
-      // Target Line
-      ctx.strokeStyle = '#ff3333';
-      ctx.lineWidth = 4;
-      ctx.beginPath();
-      ctx.moveTo(TARGET_LINE_X, 50);
-      ctx.lineTo(TARGET_LINE_X, 230);
-      ctx.stroke();
-
-      // Treble Clef Symbol
-      ctx.fillStyle = '#ffe81f';
-      ctx.font = '85px "Segoe UI Symbol", "DejaVu Sans", "Arial Unicode MS", sans-serif';
-      ctx.fillText('𝄞', 15, 165);
-
-      drawSpaceship();
-    }
-
-    function gameLoop() {
-      drawBoard();
-
-      // Render Laser
-      if (laserBeam && laserBeam.life > 0) {
-        ctx.strokeStyle = '#66fcf1';
-        ctx.lineWidth = 5;
-        ctx.shadowColor = '#66fcf1';
-        ctx.shadowBlur = 12;
+    function endGame(status) {
+        clearInterval(gameInterval);
+        isPlaying = false;
+        isAnimating = false;
         
-        ctx.beginPath();
-        ctx.moveTo(laserBeam.startX, laserBeam.startY);
-        ctx.lineTo(laserBeam.endX, laserBeam.endY);
-        ctx.stroke();
-        
-        ctx.shadowBlur = 0;
-        laserBeam.life--;
-      }
+        livesContainer.style.visibility = 'hidden';
+        disableButtons();
+        noteGroup.innerHTML = '';
 
-      // Render Floating "+1 Life!" text
-      if (lifeUpTexts.length > 0) {
-        updateAndDrawLifeUpText();
-      }
+        const isNewHighScore = checkAndUpdateHighScore(currentMode, score);
 
-      // Render Explosion Particles
-      if (explosionParticles.length > 0) {
-        updateAndDrawExplosion();
-      }
-
-      if (gameActive && currentNote) {
-        currentNote.x -= speed;
-
-        // Ledger lines
-        if (currentNote.ledger) {
-          ctx.strokeStyle = '#ffffff';
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          ctx.moveTo(currentNote.x - 15, currentNote.y);
-          ctx.lineTo(currentNote.x + 15, currentNote.y);
-          ctx.stroke();
+        if (status === "victory") {
+            playSound('victory');
+            modalCharBox.innerHTML = PROUD_BOY_SVG;
+            modalTitle.textContent = "🏆 Time's Up!";
+            modalScore.textContent = `You survived the 30s! Final Score: ${score}`;
+            modalHighscoreNotice.textContent = isNewHighScore ? "🎉 NEW HIGH SCORE! 🎉" : "";
+            modal.classList.add('active');
+        } else if (status === "gameover") {
+            playSound('gameover');
+            modalCharBox.innerHTML = SAD_BOY_SVG;
+            modalTitle.textContent = "💔 Game Over!";
+            modalScore.textContent = `You ran out of lives. Final Score: ${score}`;
+            modalHighscoreNotice.textContent = isNewHighScore ? "🎉 NEW HIGH SCORE! 🎉" : "";
+            modal.classList.add('active');
+        } else {
+            resetToInitialState();
         }
-
-        // Note head
-        ctx.fillStyle = '#66fcf1';
-        ctx.beginPath();
-        ctx.arc(currentNote.x, currentNote.y, 9, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Check if note reaches target line on the left
-        if (currentNote.x <= TARGET_LINE_X) {
-          loseLife();
-          if (gameActive) {
-            spawnNote();
-          }
-        }
-      }
-
-      if (gameActive || explosionParticles.some(p => p.alpha > 0) || wobbleFrames > 0 || lifeUpTexts.length > 0) {
-        animId = requestAnimationFrame(gameLoop);
-      }
     }
 
-    window.addEventListener('keydown', (e) => {
-      const key = e.key.toUpperCase();
-      if (['A', 'B', 'C', 'D', 'E', 'F', 'G'].includes(key)) {
-        guessNote(key);
-      }
+    function spawnNote() {
+        resetButtons();
+        
+        let nextNote;
+        do {
+            nextNote = activeNotes[Math.floor(Math.random() * activeNotes.length)];
+        } while (currentNote && nextNote.y === currentNote.y && activeNotes.length > 1);
+
+        currentNote = nextNote;
+        renderNote(currentNote);
+    }
+
+    function renderNote(note) {
+        noteGroup.innerHTML = '';
+        const x = 130; 
+
+        if (note.ledger) {
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', x - 22);
+            line.setAttribute('y1', note.y);
+            line.setAttribute('x2', x + 22);
+            line.setAttribute('y2', note.y);
+            line.setAttribute('stroke', '#333');
+            line.setAttribute('stroke-width', '2');
+            noteGroup.appendChild(line);
+        }
+
+        const ellipse = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
+        ellipse.setAttribute('cx', x);
+        ellipse.setAttribute('cy', note.y);
+        ellipse.setAttribute('rx', '13.5');
+        ellipse.setAttribute('ry', '10');
+        ellipse.setAttribute('fill', '#333');
+        ellipse.setAttribute('transform', `rotate(-20 ${x} ${note.y})`);
+        noteGroup.appendChild(ellipse);
+
+        const stem = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        const stemUp = note.y >= 80;
+        const stemX = stemUp ? x + 12 : x - 12;
+        const stemY2 = stemUp ? note.y - 45 : note.y + 45;
+
+        stem.setAttribute('x1', stemX);
+        stem.setAttribute('y1', note.y);
+        stem.setAttribute('x2', stemX);
+        stem.setAttribute('y2', stemY2);
+        stem.setAttribute('stroke', '#333');
+        stem.setAttribute('stroke-width', '2.5');
+        noteGroup.appendChild(stem);
+    }
+
+    function handleInput(selectedNote) {
+        if (!isPlaying || isAnimating) return;
+
+        const targetBtn = Array.from(noteBtns).find(btn => btn.dataset.note === selectedNote);
+        
+        if (targetBtn && targetBtn.disabled) return;
+
+        if (selectedNote === currentNote.name) {
+            playSound('correct');
+            score++;
+            scoreEl.textContent = score;
+
+            if (targetBtn) targetBtn.classList.add('btn-correct');
+            
+            shootSlingshot(currentNote.y, () => {
+                spawnNote();
+            }, false);
+
+        } else {
+            playSound('incorrect');
+            lives--;
+            updateLivesDisplay();
+
+            if (targetBtn) {
+                targetBtn.classList.add('btn-incorrect');
+                targetBtn.disabled = true;
+            }
+
+            shootSlingshot(currentNote.y, () => {
+                if (lives <= 0) {
+                    endGame('gameover');
+                }
+            }, true);
+        }
+    }
+
+    noteBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            handleInput(btn.dataset.note);
+        });
     });
 
-    updateHighScoreUI();
-    drawBoard();
-  </script>
+    modeBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            modeBtns.forEach(m => m.classList.remove('active'));
+            btn.classList.add('active');
+            
+            currentMode = btn.dataset.mode;
+            activeNotes = filterNotesByMode(currentMode);
+
+            if (isPlaying) {
+                clearInterval(gameInterval);
+                endGame('reset');
+            }
+        });
+    });
+
+    window.addEventListener('keydown', (e) => {
+        if (e.code === 'Space') {
+            e.preventDefault();
+            if (confirmResetModal.classList.contains('active')) {
+                return;
+            }
+            if (!isPlaying) {
+                if (modal.classList.contains('active')) {
+                    resetToInitialState();
+                } else {
+                    startGame();
+                }
+            }
+            return;
+        }
+
+        if (!isPlaying) return;
+        const key = e.key.toUpperCase();
+        if (['A', 'B', 'C', 'D', 'E', 'F', 'G'].includes(key)) {
+            handleInput(key);
+        }
+    });
+
+    startBtn.addEventListener('click', startGame);
+    modalReturnBtn.addEventListener('click', resetToInitialState);
+    
+    // Reset Modal Handlers
+    resetHighScoresBtn.addEventListener('click', () => {
+        if (isPlaying) {
+            clearInterval(gameInterval);
+            endGame('reset');
+        }
+        confirmResetModal.classList.add('active');
+    });
+
+    resetCancelBtn.addEventListener('click', () => {
+        confirmResetModal.classList.remove('active');
+    });
+
+    resetConfirmBtn.addEventListener('click', performResetHighScores);
+
+    loadHighScores();
+</script>
+
 </body>
 </html>
