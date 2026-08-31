@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Staff Blaster</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      background-color: #0b0c10;
+      color: #66fcf1;
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding-bottom: 25px;
+    }
+    h1 {
+      color: #ffe81f;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      margin-bottom: 5px;
+    }
+    #ui-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 700px;
+      margin-bottom: 10px;
+    }
+    .ui-stat {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+    #game-container {
+      border: 3px solid #ffe81f;
+      border-radius: 8px;
+      background: #1f2833;
+      box-shadow: 0 0 15px rgba(255, 232, 31, 0.4);
+    }
+    canvas { display: block; }
+    #controls {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    button.note-btn {
+      background: #0b0c10;
+      color: #ffe81f;
+      border: 2px solid #ffe81f;
+      padding: 12px 18px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button.note-btn:hover {
+      background: #ffe81f;
+      color: #000;
+    }
+    #start-btn {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      background: #ffe81f;
+      color: #000;
+      border: none;
+      font-weight: bold;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    #start-btn:hover {
+      background: #fff;
+    }
+    #mode-container {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+      width: 700px;
+      justify-content: center;
+    }
+    .mode-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    button.mode-btn {
+      width: 100%;
+      background: #0b0c10;
+      color: #45a29e;
+      border: 2px solid #45a29e;
+      padding: 8px 12px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    button.mode-btn:hover {
+      background: #1f2833;
+    }
+    button.mode-btn.active {
+      background: #45a29e;
+      color: #0b0c10;
+      border-color: #66fcf1;
+      box-shadow: 0 0 8px rgba(102, 252, 241, 0.5);
+    }
+    button.mode-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .high-score-label {
+      margin-top: 5px;
+      font-size: 0.8rem;
+      color: #ffe81f;
+      font-weight: bold;
+    }
+    #reset-btn {
+      margin-top: 25px;
+      background: transparent;
+      color: #ff3333;
+      border: 1px solid #ff3333;
+      padding: 6px 14px;
+      font-size: 0.8rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    #reset-btn:hover {
+      background: #ff3333;
+      color: #0b0c10;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Staff Blaster</h1>
+  
+  <div id="ui-top">
+    <div class="ui-stat">Score: <span id="score">0</span></div>
+    <div class="ui-stat">Lives: <span id="lives">3</span></div>
+  </div>
+
+  <div id="game-container">
+    <canvas id="gameCanvas" width="700" height="300"></canvas>
+  </div>
+
+  <div id="controls">
+    <button class="note-btn" onclick="guessNote('A')">A</button>
+    <button class="note-btn" onclick="guessNote('B')">B</button>
+    <button class="note-btn" onclick="guessNote('C')">C</button>
+    <button class="note-btn" onclick="guessNote('D')">D</button>
+    <button class="note-btn" onclick="guessNote('E')">E</button>
+    <button class="note-btn" onclick="guessNote('F')">F</button>
+    <button class="note-btn" onclick="guessNote('G')">G</button>
+  </div>
+
+  <button id="start-btn" onclick="startGame()">Start / Restart Game</button>
+
+  <div id="mode-container">
+    <div class="mode-wrapper">
+      <button class="mode-btn" onclick="selectMode('spaces')">Spaces (F-A-C-E)</button>
+      <div class="high-score-label">High Score: <span id="hs-spaces">0</span></div>
+    </div>
+    <div class="mode-wrapper">
+      <button class="mode-btn" onclick="selectMode('lines')">Lines (E-G-B-D-F)</button>
+      <div class="high-score-label">High Score: <span id="hs-lines">0</span></div>
+    </div>
+    <div class="mode-wrapper">
+      <button class="mode-btn" onclick="selectMode('lines_spaces')">Lines & Spaces</button>
+      <div class="high-score-label">High Score: <span id="hs-lines_spaces">0</span></div>
+    </div>
+    <div class="mode-wrapper">
+      <button class="mode-btn active" onclick="selectMode('all')">All</button>
+      <div class="high-score-label">High Score: <span id="hs-all">0</span></div>
+    </div>
+  </div>
+
+  <button id="reset-btn" onclick="resetHighScores()">Reset High Scores</button>
+
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Spaceship position (Centered)
+    const SHIP_X = canvas.width / 2; // 350px
+    // Target Line position (Left side)
+    const TARGET_LINE_X = 80;
+
+    // High Scores Storage
+    const highScores = {
+      spaces: parseInt(localStorage.getItem('sb_hs_spaces')) || 0,
+      lines: parseInt(localStorage.getItem('sb_hs_lines')) || 0,
+      lines_spaces: parseInt(localStorage.getItem('sb_hs_lines_spaces')) || 0,
+      all: parseInt(localStorage.getItem('sb_hs_all')) || 0
+    };
+
+    function updateHighScoreUI() {
+      for (const mode in highScores) {
+        const elem = document.getElementById(`hs-${mode}`);
+        if (elem) elem.innerText = highScores[mode];
+      }
+    }
+
+    function resetHighScores() {
+      const confirmed = confirm("Are you sure you want to reset your High Scores? This can't be undone");
+      if (confirmed) {
+        for (const mode in highScores) {
+          highScores[mode] = 0;
+          localStorage.removeItem(`sb_hs_${mode}`);
+        }
+        updateHighScoreUI();
+      }
+    }
+
+    // --- WEB AUDIO SYNTHESIZER ---
+    let audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function playLaserSound() {
+      if (!audioCtx) return;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sawtooth';
+      
+      const now = audioCtx.currentTime;
+      osc.frequency.setValueAtTime(800, now);
+      osc.frequency.exponentialRampToValueAtTime(100, now + 0.15);
+
+      gain.gain.setValueAtTime(0.3, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      osc.start(now);
+      osc.stop(now + 0.15);
+    }
+
+    function playLifeUpSound() {
+      if (!audioCtx) return;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+
+      const now = audioCtx.currentTime;
+      osc.frequency.setValueAtTime(523.25, now);
+      osc.frequency.setValueAtTime(659.25, now + 0.1);
+      osc.frequency.setValueAtTime(783.99, now + 0.2);
+
+      gain.gain.setValueAtTime(0.3, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      osc.start(now);
+      osc.stop(now + 0.35);
+    }
+
+    function playErrorSound() {
+      if (!audioCtx) return;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'square';
+      
+      const now = audioCtx.currentTime;
+      osc.frequency.setValueAtTime(150, now);
+      osc.frequency.linearRampToValueAtTime(80, now + 0.2);
+
+      gain.gain.setValueAtTime(0.2, now);
+      gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      osc.start(now);
+      osc.stop(now + 0.2);
+    }
+
+    function playExplosionSound() {
+      if (!audioCtx) return;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sawtooth';
+
+      const now = audioCtx.currentTime;
+      osc.frequency.setValueAtTime(120, now);
+      osc.frequency.exponentialRampToValueAtTime(20, now + 0.5);
+
+      gain.gain.setValueAtTime(0.5, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      osc.start(now);
+      osc.stop(now + 0.5);
+    }
+
+    // --- GAME DATA ---
+    const ALL_NOTES = [
+      { name: 'C', y: 200, ledger: true,  type: 'below' }, // Middle C
+      { name: 'D', y: 190, ledger: false, type: 'below' }, // Space below
+      { name: 'E', y: 180, ledger: false, type: 'line' },  // Bottom line
+      { name: 'F', y: 170, ledger: false, type: 'space' }, // 1st space
+      { name: 'G', y: 160, ledger: false, type: 'line' },  // 2nd line
+      { name: 'A', y: 150, ledger: false, type: 'space' }, // 2nd space
+      { name: 'B', y: 140, ledger: false, type: 'line' },  // 3rd line
+      { name: 'C', y: 130, ledger: false, type: 'space' }, // 3rd space
+      { name: 'D', y: 120, ledger: false, type: 'line' },  // 4th line
+      { name: 'E', y: 110, ledger: false, type: 'space' }, // 4th space
+      { name: 'F', y: 100, ledger: false, type: 'line' },  // Top line
+      { name: 'G', y: 90,  ledger: false, type: 'above' }, // Space above
+      { name: 'A', y: 80,  ledger: true,  type: 'above' }  // Ledger line A
+    ];
+
+    let selectedMode = 'all';
+    let activeNotes = [];
+    let currentNote = null;
+    let score = 0;
+    let lives = 3;
+    let speed = 0.8;
+    let gameActive = false;
+    let animId = null;
+    let flashRed = false;
+    let laserBeam = null;
+
+    let wobbleFrames = 0;
+    let isExploded = false;
+    let explosionParticles = [];
+    let lifeUpTexts = [];
+
+    function selectMode(mode) {
+      if (gameActive) return;
+      selectedMode = mode;
+
+      const buttons = document.querySelectorAll('.mode-btn');
+      buttons.forEach(btn => {
+        if (btn.getAttribute('onclick').includes(`'${mode}'`)) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+    }
+
+    function updateActiveNotes() {
+      if (selectedMode === 'spaces') {
+        activeNotes = ALL_NOTES.filter(n => n.type === 'space');
+      } else if (selectedMode === 'lines') {
+        activeNotes = ALL_NOTES.filter(n => n.type === 'line');
+      } else if (selectedMode === 'lines_spaces') {
+        activeNotes = ALL_NOTES.filter(n => n.type === 'line' || n.type === 'space');
+      } else {
+        activeNotes = ALL_NOTES;
+      }
+    }
+
+    function setModeButtonsDisabled(disabled) {
+      const buttons = document.querySelectorAll('.mode-btn');
+      buttons.forEach(btn => btn.disabled = disabled);
+    }
+
+    function spawnNote() {
+      const idx = Math.floor(Math.random() * activeNotes.length);
+      currentNote = { ...activeNotes[idx], x: canvas.width - 30 };
+    }
+
+    function createExplosion() {
+      explosionParticles = [];
+      for (let i = 0; i < 30; i++) {
+        explosionParticles.push({
+          x: SHIP_X,
+          y: 260,
+          vx: (Math.random() - 0.5) * 8,
+          vy: (Math.random() - 0.5) * 8,
+          color: ['#ffe81f', '#ff3333', '#66fcf1', '#ffffff'][Math.floor(Math.random() * 4)],
+          size: Math.random() * 6 + 2,
+          alpha: 1.0
+        });
+      }
+    }
+
+    function triggerLifeUp() {
+      lives += 1;
+      document.getElementById('lives').innerText = lives;
+      playLifeUpSound();
+      
+      lifeUpTexts.push({
+        x: canvas.width - 50,
+        y: 35,
+        alpha: 1.0
+      });
+    }
+
+    function startGame() {
+      initAudio();
+      updateActiveNotes();
+      
+      if (animId) {
+        cancelAnimationFrame(animId);
+        animId = null;
+      }
+      score = 0;
+      lives = 3;
+      speed = 0.8;
+      gameActive = true;
+      flashRed = false;
+      laserBeam = null;
+      wobbleFrames = 0;
+      isExploded = false;
+      explosionParticles = [];
+      lifeUpTexts = [];
+      
+      document.getElementById('score').innerText = score;
+      document.getElementById('lives').innerText = lives;
+      setModeButtonsDisabled(true);
+      
+      spawnNote();
+      gameLoop();
+    }
+
+    function loseLife() {
+      playErrorSound();
+      lives--;
+      document.getElementById('lives').innerText = lives;
+      flashRed = true;
+      wobbleFrames = 15;
+
+      if (lives <= 0) {
+        gameActive = false;
+        isExploded = true;
+        setModeButtonsDisabled(false);
+        playExplosionSound();
+        createExplosion();
+
+        // Highscore Logic
+        let newRecord = false;
+        if (score > highScores[selectedMode]) {
+          highScores[selectedMode] = score;
+          localStorage.setItem(`sb_hs_${selectedMode}`, score);
+          updateHighScoreUI();
+          newRecord = true;
+        }
+        
+        setTimeout(() => {
+          if (newRecord) {
+            alert(`NEW HIGH SCORE for ${selectedMode.toUpperCase()}! Final Score: ${score}`);
+          } else {
+            alert(`Game Over! Final Score: ${score}`);
+          }
+        }, 600);
+      }
+    }
+
+    function guessNote(letter) {
+      initAudio();
+      if (!gameActive || !currentNote) return;
+
+      if (currentNote.name === letter) {
+        playLaserSound();
+        
+        laserBeam = {
+          startX: SHIP_X,
+          startY: 255,
+          endX: currentNote.x,
+          endY: currentNote.y,
+          life: 8
+        };
+
+        score += 1;
+        
+        if (score % 10 === 0) {
+          triggerLifeUp();
+          speed += 0.3;
+        }
+
+        document.getElementById('score').innerText = score;
+        spawnNote();
+      } else {
+        loseLife();
+      }
+    }
+
+    function drawSpaceship() {
+      if (isExploded) return;
+
+      ctx.save();
+      
+      let xOffset = 0;
+      let rotation = 0;
+      if (wobbleFrames > 0) {
+        xOffset = Math.sin(wobbleFrames * 0.8) * 6;
+        rotation = Math.sin(wobbleFrames * 0.8) * 0.2;
+        wobbleFrames--;
+      }
+
+      ctx.translate(SHIP_X + xOffset, 260);
+      ctx.rotate(rotation);
+
+      // Wings
+      ctx.fillStyle = '#45a29e';
+      ctx.beginPath();
+      ctx.moveTo(-20, 15);
+      ctx.lineTo(0, -10);
+      ctx.lineTo(20, 15);
+      ctx.closePath();
+      ctx.fill();
+
+      // Cockpit Body
+      ctx.fillStyle = '#66fcf1';
+      ctx.beginPath();
+      ctx.moveTo(-8, 12);
+      ctx.lineTo(0, -18);
+      ctx.lineTo(8, 12);
+      ctx.closePath();
+      ctx.fill();
+
+      // Cannon Tip
+      ctx.fillStyle = '#ffe81f';
+      ctx.fillRect(-2, -22, 4, 6);
+
+      // Engine Glow
+      ctx.fillStyle = '#ff3333';
+      ctx.fillRect(-5, 15, 10, 4);
+
+      ctx.restore();
+    }
+
+    function updateAndDrawExplosion() {
+      explosionParticles.forEach((p) => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha -= 0.02;
+
+        if (p.alpha > 0) {
+          ctx.save();
+          ctx.globalAlpha = p.alpha;
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+      });
+    }
+
+    function updateAndDrawLifeUpText() {
+      lifeUpTexts.forEach((t) => {
+        t.y += 0.3;
+        t.alpha -= 0.007;
+
+        if (t.alpha > 0) {
+          ctx.save();
+          ctx.globalAlpha = t.alpha;
+          ctx.fillStyle = '#ffe81f';
+          ctx.font = 'bold 24px Arial';
+          ctx.textAlign = 'right';
+          ctx.shadowColor = '#ffe81f';
+          ctx.shadowBlur = 8;
+          ctx.fillText('+1 Life!', t.x, t.y);
+          ctx.restore();
+        }
+      });
+
+      lifeUpTexts = lifeUpTexts.filter(t => t.alpha > 0);
+    }
+
+    function drawBoard() {
+      if (flashRed) {
+        ctx.fillStyle = '#8b0000';
+        flashRed = false;
+      } else {
+        ctx.fillStyle = '#1f2833';
+      }
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Staff lines
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2;
+      const lines = [100, 120, 140, 160, 180];
+      lines.forEach(y => {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+      });
+
+      // Target Line
+      ctx.strokeStyle = '#ff3333';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(TARGET_LINE_X, 50);
+      ctx.lineTo(TARGET_LINE_X, 230);
+      ctx.stroke();
+
+      // Treble Clef Symbol
+      ctx.fillStyle = '#ffe81f';
+      ctx.font = '85px "Segoe UI Symbol", "DejaVu Sans", "Arial Unicode MS", sans-serif';
+      ctx.fillText('𝄞', 15, 165);
+
+      drawSpaceship();
+    }
+
+    function gameLoop() {
+      drawBoard();
+
+      // Render Laser
+      if (laserBeam && laserBeam.life > 0) {
+        ctx.strokeStyle = '#66fcf1';
+        ctx.lineWidth = 5;
+        ctx.shadowColor = '#66fcf1';
+        ctx.shadowBlur = 12;
+        
+        ctx.beginPath();
+        ctx.moveTo(laserBeam.startX, laserBeam.startY);
+        ctx.lineTo(laserBeam.endX, laserBeam.endY);
+        ctx.stroke();
+        
+        ctx.shadowBlur = 0;
+        laserBeam.life--;
+      }
+
+      // Render Floating "+1 Life!" text
+      if (lifeUpTexts.length > 0) {
+        updateAndDrawLifeUpText();
+      }
+
+      // Render Explosion Particles
+      if (explosionParticles.length > 0) {
+        updateAndDrawExplosion();
+      }
+
+      if (gameActive && currentNote) {
+        currentNote.x -= speed;
+
+        // Ledger lines
+        if (currentNote.ledger) {
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(currentNote.x - 15, currentNote.y);
+          ctx.lineTo(currentNote.x + 15, currentNote.y);
+          ctx.stroke();
+        }
+
+        // Note head
+        ctx.fillStyle = '#66fcf1';
+        ctx.beginPath();
+        ctx.arc(currentNote.x, currentNote.y, 9, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Check if note reaches target line on the left
+        if (currentNote.x <= TARGET_LINE_X) {
+          loseLife();
+          if (gameActive) {
+            spawnNote();
+          }
+        }
+      }
+
+      if (gameActive || explosionParticles.some(p => p.alpha > 0) || wobbleFrames > 0 || lifeUpTexts.length > 0) {
+        animId = requestAnimationFrame(gameLoop);
+      }
+    }
+
+    window.addEventListener('keydown', (e) => {
+      const key = e.key.toUpperCase();
+      if (['A', 'B', 'C', 'D', 'E', 'F', 'G'].includes(key)) {
+        guessNote(key);
+      }
+    });
+
+    updateHighScoreUI();
+    drawBoard();
+  </script>
+</body>
+</html>
