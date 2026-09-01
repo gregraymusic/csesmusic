@@ -44,7 +44,6 @@
             margin-bottom: 0.5rem;
         }
 
-        /* Timer Section Structure */
         .timer-section {
             display: flex;
             flex-direction: column;
@@ -60,7 +59,6 @@
             margin-bottom: 3px;
         }
 
-        /* Solid Progress Bar Container */
         .timer-bar-container {
             width: 100px;
             height: 14px;
@@ -73,7 +71,7 @@
         .timer-bar-fill {
             height: 100%;
             width: 100%;
-            background-color: #28a745; /* Starts Green */
+            background-color: #28a745;
             border-radius: 6px;
             transition: width 0.1s linear, background-color 0.3s ease;
         }
@@ -111,7 +109,7 @@
         .controls-area {
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: 0.75rem;
             width: 100%;
         }
 
@@ -235,7 +233,7 @@
         }
 
         .instructions-group {
-            margin-top: 0.5rem;
+            margin-top: 0.25rem;
             display: flex;
             flex-direction: column;
             gap: 2px;
@@ -254,19 +252,33 @@
             margin: 0;
         }
 
-        /* Redesigned Reset High Scores Button */
-        .reset-score-btn {
+        .action-buttons-row {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 0.25rem;
+        }
+
+        .secondary-btn {
             background: #fff;
-            border: 1.5px solid #dc3545;
-            color: #dc3545;
+            border: 1.5px solid #6c757d;
+            color: #6c757d;
             font-size: 0.8rem;
             font-weight: 600;
             border-radius: 6px;
-            padding: 6px 14px;
+            padding: 6px 12px;
             cursor: pointer;
-            margin-top: 0.5rem;
-            align-self: center;
-            transition: background-color 0.2s, color 0.2s;
+            transition: all 0.2s ease;
+        }
+
+        .secondary-btn:hover {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .reset-score-btn {
+            border-color: #dc3545;
+            color: #dc3545;
         }
 
         .reset-score-btn:hover {
@@ -274,14 +286,14 @@
             color: white;
         }
 
-        /* In-Game Modal Overlays */
+        /* Modal Overlays */
         .modal-overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.96);
+            background: rgba(255, 255, 255, 0.97);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -306,13 +318,13 @@
         }
 
         .modal-title {
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             font-weight: bold;
             margin-bottom: 0.25rem;
         }
 
         .modal-score {
-            font-size: 1.15rem;
+            font-size: 1.1rem;
             color: #555;
             margin-bottom: 0.25rem;
         }
@@ -338,21 +350,96 @@
             gap: 12px;
         }
 
-        .modal-btn-cancel {
-            background: #6c757d;
+        .modal-btn-cancel { background: #6c757d; }
+        .modal-btn-cancel:hover { background: #5a6268; }
+        .modal-btn-confirm { background: #dc3545; }
+        .modal-btn-confirm:hover { background: #c82333; }
+
+        /* Customization Modal Layout */
+        .customizer-body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            gap: 0.75rem;
         }
 
-        .modal-btn-cancel:hover {
-            background: #5a6268;
+        .customizer-preview {
+            width: 110px;
+            height: 110px;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .modal-btn-confirm {
-            background: #dc3545;
+        .customizer-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            width: 100%;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 6px;
         }
 
-        .modal-btn-confirm:hover {
-            background: #c82333;
+        .custom-tab-btn {
+            background: none;
+            border: none;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: #666;
+            padding: 6px 8px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
         }
+
+        .custom-tab-btn.active {
+            background: #007bff;
+            color: white;
+        }
+
+        .customizer-options {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            min-height: 48px;
+            align-items: center;
+        }
+
+        .opt-btn {
+            padding: 8px 12px;
+            border: 1.5px solid #ccc;
+            background: #fff;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .opt-btn:hover { border-color: #007bff; }
+        .opt-btn.active {
+            border-color: #007bff;
+            background: #e7f1ff;
+            color: #007bff;
+        }
+
+        .swatch-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 1px #ccc;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .swatch-btn:hover { transform: scale(1.1); }
+        .swatch-btn.active { box-shadow: 0 0 0 2px #007bff; }
     </style>
 </head>
 <body>
@@ -373,50 +460,17 @@
 
     <div id="staff-container">
         <svg id="staff" viewBox="0 0 330 160" width="100%" height="100%">
-            <!-- Staff Lines -->
             <line x1="20" y1="40" x2="230" y2="40" stroke="#333" stroke-width="2"/>
             <line x1="20" y1="60" x2="230" y2="60" stroke="#333" stroke-width="2"/>
             <line x1="20" y1="80" x2="230" y2="80" stroke="#333" stroke-width="2"/>
             <line x1="20" y1="100" x2="230" y2="100" stroke="#333" stroke-width="2"/>
             <line x1="20" y1="120" x2="230" y2="120" stroke="#333" stroke-width="2"/>
             
-            <!-- Dynamic Note Group -->
             <g id="note-group"></g>
 
-            <!-- Slingshot Projectile Pebble -->
             <circle id="pebble" cx="284" cy="80" r="4" fill="#333" style="display: none;" />
 
-            <!-- Character Group -->
-            <g id="character" transform="translate(277, 45)">
-                <!-- Back Leg -->
-                <rect x="22" y="70" width="6" height="20" fill="#f1c27d" />
-                <rect x="20" y="90" width="10" height="5" rx="2" fill="#333" />
-                <!-- Shorts -->
-                <path d="M 12 55 L 32 55 L 35 72 L 25 72 L 22 65 L 19 72 L 9 72 Z" fill="#2980b9" />
-                <!-- Front Leg -->
-                <rect x="11" y="70" width="6" height="20" fill="#f1c27d" />
-                <rect x="7" y="90" width="10" height="5" rx="2" fill="#333" />
-
-                <!-- T-Shirt & Body -->
-                <path d="M 12 30 L 32 30 L 34 57 L 10 57 Z" fill="#e74c3c" />
-
-                <!-- Head & Face -->
-                <circle cx="22" cy="20" r="11" fill="#f1c27d" />
-                <!-- Eye -->
-                <circle cx="17" cy="19" r="1.5" fill="#333" />
-                <!-- Backwards Ball Cap -->
-                <path d="M 11 19 A 11 11 0 0 1 33 19 Z" fill="#f39c12" />
-                <path d="M 33 19 L 43 21 L 33 23 Z" fill="#e67e22" />
-
-                <!-- Slingshot Arm & Rubber Bands -->
-                <g id="slingshot-arm">
-                    <path d="M 2 30 L 7 42 M 7 42 L 7 50 M 7 42 L 12 30" stroke="#795548" stroke-width="2.5" stroke-linecap="round" />
-                    <path d="M 20 35 L 7 42" stroke="#f1c27d" stroke-width="4" stroke-linecap="round" />
-                    <line id="band1" x1="2" y1="30" x2="22" y2="35" stroke="#333" stroke-width="1.2" />
-                    <line id="band2" x1="12" y1="30" x2="22" y2="35" stroke="#333" stroke-width="1.2" />
-                    <path id="pull-arm" d="M 22 35 L 22 35" stroke="#f1c27d" stroke-width="4" stroke-linecap="round" />
-                </g>
-            </g>
+            <g id="main-character-svg" transform="translate(277, 45)"></g>
         </svg>
     </div>
 
@@ -463,10 +517,12 @@
             </div>
         </div>
         
-        <button id="reset-high-scores-btn" class="reset-score-btn">Reset High Scores</button>
+        <div class="action-buttons-row">
+            <button id="customize-btn" class="secondary-btn">Customize Character</button>
+            <button id="reset-high-scores-btn" class="secondary-btn reset-score-btn">Reset High Scores</button>
+        </div>
     </div>
 
-    <!-- Game End Modal Overlay -->
     <div id="game-modal" class="modal-overlay">
         <div id="modal-char-box" class="modal-character-box"></div>
         <div id="modal-title" class="modal-title">Game Over!</div>
@@ -475,7 +531,6 @@
         <button id="modal-return-btn" class="modal-btn">Return</button>
     </div>
 
-    <!-- Confirm Reset High Scores Modal Overlay -->
     <div id="confirm-reset-modal" class="modal-overlay">
         <div class="modal-title">Reset High Scores?</div>
         <div class="modal-subtitle">Are you sure you want to reset your high scores? This can't be undone.</div>
@@ -484,9 +539,253 @@
             <button id="reset-confirm-btn" class="modal-btn modal-btn-confirm">Reset</button>
         </div>
     </div>
+
+    <div id="customizer-modal" class="modal-overlay">
+        <div class="modal-title" style="font-size: 1.4rem; margin-bottom: 0.5rem;">Customize Character</div>
+        <div class="customizer-body">
+            <div class="customizer-preview">
+                <svg id="customizer-svg-preview" viewBox="0 0 100 120" width="100%" height="100%"></svg>
+            </div>
+            
+            <div class="customizer-tabs">
+                <button class="custom-tab-btn active" data-tab="head">Headwear</button>
+                <button class="custom-tab-btn" data-tab="skin">Skin</button>
+                <button class="custom-tab-btn" data-tab="shirt">Shirt</button>
+                <button class="custom-tab-btn" data-tab="pants">Pants</button>
+                <button class="custom-tab-btn" data-tab="shoes">Shoes</button>
+            </div>
+
+            <div id="customizer-options-container" class="customizer-options"></div>
+        </div>
+        <button id="customizer-close-btn" class="modal-btn" style="margin-top: 1rem; padding: 6px 20px; font-size: 1rem;">Done</button>
+    </div>
 </div>
 
 <script>
+    // Asset Palette Options
+    const CUSTOM_OPTIONS = {
+        skin: [
+            { id: 0, label: 'Fair', color: '#f1c27d' },
+            { id: 1, label: 'Light', color: '#ffd1a4' },
+            { id: 2, label: 'Medium', color: '#d08b5b' },
+            { id: 3, label: 'Tan', color: '#ae6f3d' },
+            { id: 4, label: 'Dark', color: '#623d24' }
+        ],
+        shirt: [
+            { id: 0, label: 'Red', color: '#e74c3c' },
+            { id: 1, label: 'Blue', color: '#3498db' },
+            { id: 2, label: 'Green', color: '#2ecc71' },
+            { id: 3, label: 'Purple', color: '#9b59b6' },
+            { id: 4, label: 'Dark Grey', color: '#34495e' }
+        ],
+        pants: [
+            { id: 0, label: 'Blue Shorts', color: '#2980b9' },
+            { id: 1, label: 'Khaki Shorts', color: '#d4ac0d' },
+            { id: 2, label: 'Black Shorts', color: '#2c3e50' },
+            { id: 3, label: 'Green Cargo', color: '#27ae60' },
+            { id: 4, label: 'Red Shorts', color: '#c0392b' }
+        ],
+        shoes: [
+            { id: 0, label: 'Black', color: '#333333' },
+            { id: 1, label: 'White', color: '#ecf0f1' },
+            { id: 2, label: 'Red Kicks', color: '#e74c3c' },
+            { id: 3, label: 'Brown Boots', color: '#795548' },
+            { id: 4, label: 'Gold', color: '#f1c40f' }
+        ],
+        head: [
+            { id: 0, label: 'Backwards Cap' },
+            { id: 1, label: 'Headband' },
+            { id: 2, label: 'Beanie' },
+            { id: 3, label: 'None / Bald' }
+        ]
+    };
+
+    let userCustomization = {
+        skin: 0,
+        shirt: 0,
+        pants: 0,
+        shoes: 0,
+        head: 0
+    };
+
+    function loadCustomization() {
+        const saved = localStorage.getItem('note_game_customization');
+        if (saved) {
+            try {
+                Object.assign(userCustomization, JSON.parse(saved));
+                // Fallback reset if previously saved index 2 (Spiky Hair) or higher out-of-bounds index
+                if (userCustomization.head >= CUSTOM_OPTIONS.head.length) {
+                    userCustomization.head = 0;
+                }
+            } catch(e) {}
+        }
+    }
+
+    function saveCustomization() {
+        localStorage.setItem('note_game_customization', JSON.stringify(userCustomization));
+        renderAllCharacters();
+    }
+
+    // Helper SVG Headwear Builders - Raised vertically so eyes remain uncovered
+    function getHeadwearSVG(headId, isPreview = false, pose = 'normal') {
+        if (headId === 0) { // Backwards Cap
+            if (isPreview || pose !== 'normal') {
+                return `<path d="M 33 16 A 17 17 0 0 1 67 16 Z" fill="#f39c12" />
+                        <path d="M 67 16 L 81 19 L 67 22 Z" fill="#e67e22" />`;
+            }
+            return `<path d="M 11 14 A 11 11 0 0 1 33 14 Z" fill="#f39c12" />
+                    <path d="M 33 14 L 43 16 L 33 18 Z" fill="#e67e22" />`;
+        }
+        if (headId === 1) { // Headband
+            if (isPreview || pose !== 'normal') {
+                return `<rect x="33" y="11" width="34" height="5" fill="#e74c3c" rx="2" />`;
+            }
+            return `<rect x="11" y="10" width="22" height="4" fill="#e74c3c" rx="2" />`;
+        }
+        if (headId === 2) { // Beanie
+            if (isPreview || pose !== 'normal') {
+                return `<path d="M 32 17 A 18 18 0 0 1 68 17 Z" fill="#2c3e50" />
+                        <rect x="31" y="15" width="38" height="5" fill="#34495e" rx="2" />`;
+            }
+            return `<path d="M 10 14 A 12 12 0 0 1 34 14 Z" fill="#2c3e50" />
+                    <rect x="9" y="12" width="26" height="4" fill="#34495e" rx="2" />`;
+        }
+        return ''; // Bald / None
+    }
+
+    // Build Character Models
+    function generateInGameCharacterSVG() {
+        const cSkin = CUSTOM_OPTIONS.skin[userCustomization.skin].color;
+        const cShirt = CUSTOM_OPTIONS.shirt[userCustomization.shirt].color;
+        const cPants = CUSTOM_OPTIONS.pants[userCustomization.pants].color;
+        const cShoes = CUSTOM_OPTIONS.shoes[userCustomization.shoes].color;
+        const headSVG = getHeadwearSVG(userCustomization.head, false, 'normal');
+
+        return `
+            <rect x="22" y="70" width="6" height="20" fill="${cSkin}" />
+            <rect x="20" y="90" width="10" height="5" rx="2" fill="${cShoes}" />
+            <path d="M 12 55 L 32 55 L 35 72 L 25 72 L 22 65 L 19 72 L 9 72 Z" fill="${cPants}" />
+            <rect x="11" y="70" width="6" height="20" fill="${cSkin}" />
+            <rect x="7" y="90" width="10" height="5" rx="2" fill="${cShoes}" />
+
+            <path d="M 12 30 L 32 30 L 34 57 L 10 57 Z" fill="${cShirt}" />
+
+            <circle cx="22" cy="20" r="11" fill="${cSkin}" />
+            <circle cx="17" cy="19" r="1.5" fill="#333" />
+            ${headSVG}
+
+            <g id="slingshot-arm">
+                <path d="M 2 30 L 7 42 M 7 42 L 7 50 M 7 42 L 12 30" stroke="#795548" stroke-width="2.5" stroke-linecap="round" />
+                <path d="M 20 35 L 7 42" stroke="${cSkin}" stroke-width="4" stroke-linecap="round" />
+                <line id="band1" x1="2" y1="30" x2="22" y2="35" stroke="#333" stroke-width="1.2" />
+                <line id="band2" x1="12" y1="30" x2="22" y2="35" stroke="#333" stroke-width="1.2" />
+                <path id="pull-arm" d="M 22 35 L 22 35" stroke="${cSkin}" stroke-width="4" stroke-linecap="round" />
+            </g>
+        `;
+    }
+
+    function generateModalCharacterSVG(pose) {
+        const cSkin = CUSTOM_OPTIONS.skin[userCustomization.skin].color;
+        const cShirt = CUSTOM_OPTIONS.shirt[userCustomization.shirt].color;
+        const cPants = CUSTOM_OPTIONS.pants[userCustomization.pants].color;
+        const cShoes = CUSTOM_OPTIONS.shoes[userCustomization.shoes].color;
+        const headSVG = getHeadwearSVG(userCustomization.head, false, pose);
+
+        if (pose === 'sad') {
+            return `
+                <svg viewBox="0 0 100 120" width="100%" height="100%">
+                    <rect x="36" y="80" width="9" height="24" fill="${cSkin}" />
+                    <rect x="33" y="104" width="14" height="6" rx="3" fill="${cShoes}" />
+                    <rect x="55" y="80" width="9" height="24" fill="${cSkin}" />
+                    <rect x="53" y="104" width="14" height="6" rx="3" fill="${cShoes}" />
+                    <path d="M 32 66 L 68 66 L 70 85 L 53 85 L 50 78 L 47 85 L 30 85 Z" fill="${cPants}" />
+                    <path d="M 32 38 L 68 38 L 69 68 L 31 68 Z" fill="${cShirt}" />
+                    <path d="M 32 40 L 22 68" stroke="${cSkin}" stroke-width="7" stroke-linecap="round" />
+                    <path d="M 68 40 L 78 68" stroke="${cSkin}" stroke-width="7" stroke-linecap="round" />
+                    <circle cx="50" cy="28" r="16" fill="${cSkin}" />
+                    <path d="M 40 25 L 47 28" stroke="#333" stroke-width="2" stroke-linecap="round" />
+                    <path d="M 60 25 L 53 28" stroke="#333" stroke-width="2" stroke-linecap="round" />
+                    <path d="M 44 35 Q 50 30 56 35" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round" />
+                    <path d="M 58 29 Q 58 33 56 34 Q 54 33 58 29" fill="#3498db" />
+                    ${headSVG}
+                </svg>
+            `;
+        }
+
+        // Proud / Victory Pose
+        return `
+            <svg viewBox="0 0 100 120" width="100%" height="100%">
+                <path d="M 15 20 L 17 25 L 22 25 L 18 28 L 20 33 L 15 30 L 10 33 L 12 28 L 8 25 L 13 25 Z" fill="#f1c40f" />
+                <path d="M 85 20 L 87 25 L 92 25 L 88 28 L 90 33 L 85 30 L 80 33 L 82 28 L 78 25 L 83 25 Z" fill="#f1c40f" />
+                <rect x="34" y="78" width="9" height="26" fill="${cSkin}" />
+                <rect x="30" y="104" width="15" height="6" rx="3" fill="${cShoes}" />
+                <rect x="57" y="78" width="9" height="26" fill="${cSkin}" />
+                <rect x="55" y="104" width="15" height="6" rx="3" fill="${cShoes}" />
+                <path d="M 30 64 L 70 64 L 72 82 L 54 82 L 50 75 L 46 82 L 28 82 Z" fill="${cPants}" />
+                <path d="M 30 35 L 70 35 L 71 66 L 29 66 Z" fill="${cShirt}" />
+                <path d="M 30 37 L 18 50 L 30 58" stroke="${cSkin}" stroke-width="6" fill="none" stroke-linecap="round" />
+                <path d="M 70 37 L 85 20" stroke="${cSkin}" stroke-width="6" stroke-linecap="round" />
+                <circle cx="87" cy="18" r="4" fill="${cSkin}" />
+                <path d="M 87 18 L 86 10 M 89 18 L 93 11" stroke="${cSkin}" stroke-width="2.5" stroke-linecap="round" />
+                <circle cx="50" cy="24" r="16" fill="${cSkin}" />
+                <path d="M 41 21 Q 45 17 48 21" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round" />
+                <path d="M 52 21 Q 55 17 59 21" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round" />
+                <path d="M 42 27 Q 50 37 58 27 Z" fill="#e74c3c" stroke="#333" stroke-width="1.5" />
+                ${headSVG}
+            </svg>
+        `;
+    }
+
+    function renderAllCharacters() {
+        const mainCharGroup = document.getElementById('main-character-svg');
+        mainCharGroup.innerHTML = generateInGameCharacterSVG();
+        
+        // Re-bind dynamic slingshot DOM elements
+        band1 = document.getElementById('band1');
+        band2 = document.getElementById('band2');
+        pullArm = document.getElementById('pull-arm');
+
+        const previewSvg = document.getElementById('customizer-svg-preview');
+        previewSvg.innerHTML = generateModalCharacterSVG('proud').replace(/width="100%" height="100%"/, '');
+    }
+
+    // Customizer UI Logic
+    let currentCustomTab = 'head';
+
+    function renderCustomizerOptions() {
+        const container = document.getElementById('customizer-options-container');
+        container.innerHTML = '';
+
+        const options = CUSTOM_OPTIONS[currentCustomTab];
+        const selectedId = userCustomization[currentCustomTab];
+
+        options.forEach(opt => {
+            if (currentCustomTab === 'head') {
+                const btn = document.createElement('button');
+                btn.className = `opt-btn ${opt.id === selectedId ? 'active' : ''}`;
+                btn.textContent = opt.label;
+                btn.addEventListener('click', () => {
+                    userCustomization[currentCustomTab] = opt.id;
+                    saveCustomization();
+                    renderCustomizerOptions();
+                });
+                container.appendChild(btn);
+            } else {
+                const btn = document.createElement('button');
+                btn.className = `swatch-btn ${opt.id === selectedId ? 'active' : ''}`;
+                btn.style.backgroundColor = opt.color;
+                btn.title = opt.label;
+                btn.addEventListener('click', () => {
+                    userCustomization[currentCustomTab] = opt.id;
+                    saveCustomization();
+                    renderCustomizerOptions();
+                });
+                container.appendChild(btn);
+            }
+        });
+    }
+
+    // Core Game Code & State
     const TOTAL_TIME = 30;
     const ALL_NOTES = [
         { name: 'C', y: 140, ledger: true,  tags: ['all'] },              
@@ -515,6 +814,8 @@
     let audioCtx = null;
     let isAnimating = false;
 
+    let band1, band2, pullArm;
+
     const highScores = {
         'spaces': 0,
         'lines': 0,
@@ -531,10 +832,8 @@
     const modeBtns = document.querySelectorAll('.mode-btn');
     const noteGroup = document.getElementById('note-group');
     const pebble = document.getElementById('pebble');
-    const band1 = document.getElementById('band1');
-    const band2 = document.getElementById('band2');
-    const pullArm = document.getElementById('pull-arm');
     const resetHighScoresBtn = document.getElementById('reset-high-scores-btn');
+    const customizeBtn = document.getElementById('customize-btn');
 
     // Modals
     const modal = document.getElementById('game-modal');
@@ -548,48 +847,8 @@
     const resetCancelBtn = document.getElementById('reset-cancel-btn');
     const resetConfirmBtn = document.getElementById('reset-confirm-btn');
 
-    const SAD_BOY_SVG = `
-        <svg viewBox="0 0 100 120" width="100%" height="100%">
-            <rect x="36" y="80" width="9" height="24" fill="#f1c27d" />
-            <rect x="33" y="104" width="14" height="6" rx="3" fill="#333" />
-            <rect x="55" y="80" width="9" height="24" fill="#f1c27d" />
-            <rect x="53" y="104" width="14" height="6" rx="3" fill="#333" />
-            <path d="M 32 66 L 68 66 L 70 85 L 53 85 L 50 78 L 47 85 L 30 85 Z" fill="#2980b9" />
-            <path d="M 32 38 L 68 38 L 69 68 L 31 68 Z" fill="#e74c3c" />
-            <path d="M 32 40 L 22 68" stroke="#f1c27d" stroke-width="7" stroke-linecap="round" />
-            <path d="M 68 40 L 78 68" stroke="#f1c27d" stroke-width="7" stroke-linecap="round" />
-            <circle cx="50" cy="28" r="16" fill="#f1c27d" />
-            <path d="M 40 25 L 47 28" stroke="#333" stroke-width="2" stroke-linecap="round" />
-            <path d="M 60 25 L 53 28" stroke="#333" stroke-width="2" stroke-linecap="round" />
-            <path d="M 44 35 Q 50 30 56 35" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round" />
-            <path d="M 58 29 Q 58 33 56 34 Q 54 33 58 29" fill="#3498db" />
-            <path d="M 33 26 A 17 17 0 0 1 67 26 Z" fill="#f39c12" />
-            <path d="M 66 26 L 80 30 L 66 32 Z" fill="#e67e22" />
-        </svg>
-    `;
-
-    const PROUD_BOY_SVG = `
-        <svg viewBox="0 0 100 120" width="100%" height="100%">
-            <path d="M 15 20 L 17 25 L 22 25 L 18 28 L 20 33 L 15 30 L 10 33 L 12 28 L 8 25 L 13 25 Z" fill="#f1c40f" />
-            <path d="M 85 20 L 87 25 L 92 25 L 88 28 L 90 33 L 85 30 L 80 33 L 82 28 L 78 25 L 83 25 Z" fill="#f1c40f" />
-            <rect x="34" y="78" width="9" height="26" fill="#f1c27d" />
-            <rect x="30" y="104" width="15" height="6" rx="3" fill="#333" />
-            <rect x="57" y="78" width="9" height="26" fill="#f1c27d" />
-            <rect x="55" y="104" width="15" height="6" rx="3" fill="#333" />
-            <path d="M 30 64 L 70 64 L 72 82 L 54 82 L 50 75 L 46 82 L 28 82 Z" fill="#2980b9" />
-            <path d="M 30 35 L 70 35 L 71 66 L 29 66 Z" fill="#e74c3c" />
-            <path d="M 30 37 L 18 50 L 30 58" stroke="#f1c27d" stroke-width="6" fill="none" stroke-linecap="round" />
-            <path d="M 70 37 L 85 20" stroke="#f1c27d" stroke-width="6" stroke-linecap="round" />
-            <circle cx="87" cy="18" r="4" fill="#f1c27d" />
-            <path d="M 87 18 L 86 10 M 89 18 L 93 11" stroke="#f1c27d" stroke-width="2.5" stroke-linecap="round" />
-            <circle cx="50" cy="24" r="16" fill="#f1c27d" />
-            <path d="M 41 21 Q 45 17 48 21" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round" />
-            <path d="M 52 21 Q 55 17 59 21" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round" />
-            <path d="M 42 27 Q 50 37 58 27 Z" fill="#e74c3c" stroke="#333" stroke-width="1.5" />
-            <path d="M 33 22 A 17 17 0 0 1 67 22 Z" fill="#f39c12" />
-            <path d="M 67 22 L 81 25 L 67 28 Z" fill="#e67e22" />
-        </svg>
-    `;
+    const customizerModal = document.getElementById('customizer-modal');
+    const customizerCloseBtn = document.getElementById('customizer-close-btn');
 
     function updateTimerBar(timeRemaining) {
         const percentage = Math.max(0, (timeRemaining / TOTAL_TIME) * 100);
@@ -610,9 +869,7 @@
             try {
                 const parsed = JSON.parse(savedScores);
                 Object.assign(highScores, parsed);
-            } catch (e) {
-                console.error("Could not parse saved high scores", e);
-            }
+            } catch (e) {}
         }
         updateHighScoreUI();
     }
@@ -798,6 +1055,7 @@
     function resetToInitialState() {
         modal.classList.remove('active');
         confirmResetModal.classList.remove('active');
+        customizerModal.classList.remove('active');
         isPlaying = false;
         isAnimating = false;
         
@@ -818,10 +1076,11 @@
     }
 
     function startGame() {
-        if (isPlaying || confirmResetModal.classList.contains('active')) return;
+        if (isPlaying || confirmResetModal.classList.contains('active') || customizerModal.classList.contains('active')) return;
         initAudio();
         modal.classList.remove('active');
         confirmResetModal.classList.remove('active');
+        customizerModal.classList.remove('active');
         
         score = 0;
         lives = 3;
@@ -861,14 +1120,14 @@
 
         if (status === "victory") {
             playSound('victory');
-            modalCharBox.innerHTML = PROUD_BOY_SVG;
+            modalCharBox.innerHTML = generateModalCharacterSVG('proud');
             modalTitle.textContent = "🏆 Time's Up!";
             modalScore.textContent = `You survived the 30s! Final Score: ${score}`;
             modalHighscoreNotice.textContent = isNewHighScore ? "🎉 NEW HIGH SCORE! 🎉" : "";
             modal.classList.add('active');
         } else if (status === "gameover") {
             playSound('gameover');
-            modalCharBox.innerHTML = SAD_BOY_SVG;
+            modalCharBox.innerHTML = generateModalCharacterSVG('sad');
             modalTitle.textContent = "💔 Game Over!";
             modalScore.textContent = `You ran out of lives. Final Score: ${score}`;
             modalHighscoreNotice.textContent = isNewHighScore ? "🎉 NEW HIGH SCORE! 🎉" : "";
@@ -988,7 +1247,7 @@
     window.addEventListener('keydown', (e) => {
         if (e.code === 'Space') {
             e.preventDefault();
-            if (confirmResetModal.classList.contains('active')) {
+            if (confirmResetModal.classList.contains('active') || customizerModal.classList.contains('active')) {
                 return;
             }
             if (!isPlaying) {
@@ -1011,7 +1270,7 @@
     startBtn.addEventListener('click', startGame);
     modalReturnBtn.addEventListener('click', resetToInitialState);
     
-    // Reset Modal Handlers
+    // Reset High Scores Handlers
     resetHighScoresBtn.addEventListener('click', () => {
         if (isPlaying) {
             clearInterval(gameInterval);
@@ -1026,6 +1285,32 @@
 
     resetConfirmBtn.addEventListener('click', performResetHighScores);
 
+    // Customizer Modal Handlers
+    customizeBtn.addEventListener('click', () => {
+        if (isPlaying) {
+            clearInterval(gameInterval);
+            endGame('reset');
+        }
+        renderCustomizerOptions();
+        customizerModal.classList.add('active');
+    });
+
+    customizerCloseBtn.addEventListener('click', () => {
+        customizerModal.classList.remove('active');
+    });
+
+    document.querySelectorAll('.custom-tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.custom-tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentCustomTab = btn.dataset.tab;
+            renderCustomizerOptions();
+        });
+    });
+
+    // Initialization
+    loadCustomization();
+    renderAllCharacters();
     loadHighScores();
 </script>
 
