@@ -168,7 +168,7 @@
             cursor: not-allowed;
         }
 
-        #start-btn, #practice-btn, .modal-btn {
+        #start-btn, #practice-btn, #reset-game-btn, .modal-btn {
             padding: 10px 20px;
             font-size: 1.1rem;
             font-weight: bold;
@@ -205,6 +205,15 @@
         }
 
         #practice-btn.in-practice:hover {
+            background: #c82333;
+        }
+
+        #reset-game-btn {
+            background: #dc3545;
+            display: none;
+        }
+
+        #reset-game-btn:hover {
             background: #c82333;
         }
 
@@ -516,6 +525,9 @@
             </button>
             <button id="practice-btn">
                 <span>Practice</span>
+            </button>
+            <button id="reset-game-btn">
+                <span>Reset</span>
             </button>
         </div>
 
@@ -868,6 +880,7 @@
     const livesContainer = document.getElementById('lives-container');
     const startBtn = document.getElementById('start-btn');
     const practiceBtn = document.getElementById('practice-btn');
+    const resetGameBtn = document.getElementById('reset-game-btn');
     const noteBtns = document.querySelectorAll('.note-btn');
     const modeBtns = document.querySelectorAll('.mode-btn');
     const noteGroup = document.getElementById('note-group');
@@ -1134,8 +1147,12 @@
         updateLivesDisplay();
         
         livesContainer.style.visibility = 'hidden';
-        startBtn.style.display = 'flex';
         
+        // Return default button visibility
+        startBtn.style.display = 'flex';
+        practiceBtn.style.display = 'flex';
+        resetGameBtn.style.display = 'none';
+
         practiceBtn.innerHTML = '<span>Practice</span>';
         practiceBtn.classList.remove('in-practice');
         instructionsMain.textContent = "Correctly name as many notes as you can in 30 seconds!";
@@ -1165,7 +1182,11 @@
         updateLivesDisplay();
         
         livesContainer.style.visibility = 'visible';
+        
+        // Show Reset button, hide Start and Practice
         startBtn.style.display = 'none';
+        practiceBtn.style.display = 'none';
+        resetGameBtn.style.display = 'flex';
 
         resetButtons();
         spawnNote();
@@ -1200,6 +1221,9 @@
         livesContainer.style.visibility = 'hidden';
         
         startBtn.style.display = 'none';
+        practiceBtn.style.display = 'flex';
+        resetGameBtn.style.display = 'none';
+
         practiceBtn.innerHTML = '<span>End Practice</span>';
         practiceBtn.classList.add('in-practice');
         instructionsMain.textContent = "Practice Mode active! Unlimited time and lives.";
@@ -1391,6 +1415,8 @@
             startPractice();
         }
     });
+
+    resetGameBtn.addEventListener('click', resetToInitialState);
 
     modalReturnBtn.addEventListener('click', resetToInitialState);
     
