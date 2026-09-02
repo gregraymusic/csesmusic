@@ -106,11 +106,27 @@
             pointer-events: none;
         }
 
+        .staff-line {
+            stroke: #333;
+            transition: stroke 0.3s ease;
+        }
+
+        .staff-line.practice-mode {
+            stroke: #007bff;
+        }
+
         .controls-area {
             display: flex;
             flex-direction: column;
             gap: 0.75rem;
             width: 100%;
+        }
+
+        .start-buttons-row {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 0.5rem 0;
         }
 
         .button-grid {
@@ -152,33 +168,51 @@
             cursor: not-allowed;
         }
 
-        #start-btn, .modal-btn {
-            padding: 10px 24px;
-            font-size: 1.2rem;
+        #start-btn, #practice-btn, .modal-btn {
+            padding: 10px 20px;
+            font-size: 1.1rem;
             font-weight: bold;
-            background: #28a745;
             color: white;
             border: none;
             border-radius: 6px;
             cursor: pointer;
-            margin: 0.5rem auto;
-            align-self: center;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             line-height: 1.2;
+            min-width: 140px;
         }
 
-        #start-btn .btn-subtext {
+        #start-btn {
+            background: #28a745;
+        }
+
+        #start-btn:hover {
+            background: #218838;
+        }
+
+        #practice-btn {
+            background: #007bff;
+        }
+
+        #practice-btn:hover {
+            background: #0069d9;
+        }
+
+        #practice-btn.in-practice {
+            background: #dc3545;
+        }
+
+        #practice-btn.in-practice:hover {
+            background: #c82333;
+        }
+
+        .btn-subtext {
             font-size: 0.75rem;
             font-weight: normal;
             opacity: 0.9;
             margin-top: 3px;
-        }
-
-        #start-btn:hover, .modal-btn:hover {
-            background: #218838;
         }
 
         .mode-container {
@@ -460,11 +494,11 @@
 
     <div id="staff-container">
         <svg id="staff" viewBox="0 0 330 160" width="100%" height="100%">
-            <line x1="20" y1="40" x2="230" y2="40" stroke="#333" stroke-width="2"/>
-            <line x1="20" y1="60" x2="230" y2="60" stroke="#333" stroke-width="2"/>
-            <line x1="20" y1="80" x2="230" y2="80" stroke="#333" stroke-width="2"/>
-            <line x1="20" y1="100" x2="230" y2="100" stroke="#333" stroke-width="2"/>
-            <line x1="20" y1="120" x2="230" y2="120" stroke="#333" stroke-width="2"/>
+            <line class="staff-line" x1="20" y1="40" x2="230" y2="40" stroke-width="2"/>
+            <line class="staff-line" x1="20" y1="60" x2="230" y2="60" stroke-width="2"/>
+            <line class="staff-line" x1="20" y1="80" x2="230" y2="80" stroke-width="2"/>
+            <line class="staff-line" x1="20" y1="100" x2="230" y2="100" stroke-width="2"/>
+            <line class="staff-line" x1="20" y1="120" x2="230" y2="120" stroke-width="2"/>
             
             <g id="note-group"></g>
 
@@ -475,10 +509,15 @@
     </div>
 
     <div class="controls-area">
-        <button id="start-btn">
-            <span>Start</span>
-            <span class="btn-subtext">Press Space</span>
-        </button>
+        <div class="start-buttons-row">
+            <button id="start-btn">
+                <span>Start</span>
+                <span class="btn-subtext">Press Space</span>
+            </button>
+            <button id="practice-btn">
+                <span>Practice</span>
+            </button>
+        </div>
 
         <div class="button-grid">
             <button class="note-btn" data-note="A" disabled>A</button>
@@ -491,7 +530,7 @@
         </div>
 
         <div class="instructions-group">
-            <p class="instructions-main">Correctly name as many notes as you can in 30 seconds!</p>
+            <p id="instructions-main" class="instructions-main">Correctly name as many notes as you can in 30 seconds!</p>
             <p class="instructions">Click the buttons or press keys <strong>A–G</strong> on your keyboard.</p>
         </div>
 
@@ -528,7 +567,7 @@
         <div id="modal-title" class="modal-title">Game Over!</div>
         <div id="modal-score" class="modal-score">Final Score: 0</div>
         <div id="modal-highscore-notice" class="modal-highscore-notice"></div>
-        <button id="modal-return-btn" class="modal-btn">Return</button>
+        <button id="modal-return-btn" class="modal-btn" style="background:#28a745;">Return</button>
     </div>
 
     <div id="confirm-reset-modal" class="modal-overlay">
@@ -557,7 +596,7 @@
 
             <div id="customizer-options-container" class="customizer-options"></div>
         </div>
-        <button id="customizer-close-btn" class="modal-btn" style="margin-top: 1rem; padding: 6px 20px; font-size: 1rem;">Done</button>
+        <button id="customizer-close-btn" class="modal-btn" style="margin-top: 1rem; padding: 6px 20px; font-size: 1rem; background:#28a745;">Done</button>
     </div>
 </div>
 
@@ -613,7 +652,6 @@
         if (saved) {
             try {
                 Object.assign(userCustomization, JSON.parse(saved));
-                // Fallback reset if previously saved index 2 (Spiky Hair) or higher out-of-bounds index
                 if (userCustomization.head >= CUSTOM_OPTIONS.head.length) {
                     userCustomization.head = 0;
                 }
@@ -811,6 +849,7 @@
     let timeLeft = TOTAL_TIME;
     let gameInterval = null;
     let isPlaying = false;
+    let isPracticeMode = false;
     let audioCtx = null;
     let isAnimating = false;
 
@@ -828,12 +867,15 @@
     const livesEl = document.getElementById('lives');
     const livesContainer = document.getElementById('lives-container');
     const startBtn = document.getElementById('start-btn');
+    const practiceBtn = document.getElementById('practice-btn');
     const noteBtns = document.querySelectorAll('.note-btn');
     const modeBtns = document.querySelectorAll('.mode-btn');
     const noteGroup = document.getElementById('note-group');
     const pebble = document.getElementById('pebble');
     const resetHighScoresBtn = document.getElementById('reset-high-scores-btn');
     const customizeBtn = document.getElementById('customize-btn');
+    const instructionsMain = document.getElementById('instructions-main');
+    const staffLines = document.querySelectorAll('.staff-line');
 
     // Modals
     const modal = document.getElementById('game-modal');
@@ -850,7 +892,22 @@
     const customizerModal = document.getElementById('customizer-modal');
     const customizerCloseBtn = document.getElementById('customizer-close-btn');
 
+    function setStaffPracticeVisuals(active) {
+        staffLines.forEach(line => {
+            if (active) {
+                line.classList.add('practice-mode');
+            } else {
+                line.classList.remove('practice-mode');
+            }
+        });
+    }
+
     function updateTimerBar(timeRemaining) {
+        if (isPracticeMode) {
+            timerBar.style.width = '100%';
+            timerBar.style.backgroundColor = '#007bff';
+            return;
+        }
         const percentage = Math.max(0, (timeRemaining / TOTAL_TIME) * 100);
         timerBar.style.width = `${percentage}%`;
 
@@ -884,6 +941,7 @@
     }
 
     function checkAndUpdateHighScore(currentMode, score) {
+        if (isPracticeMode) return false;
         if (score > highScores[currentMode]) {
             highScores[currentMode] = score;
             localStorage.setItem('note_game_highscores', JSON.stringify(highScores));
@@ -1031,6 +1089,10 @@
     }
 
     function updateLivesDisplay() {
+        if (isPracticeMode) {
+            livesContainer.style.visibility = 'hidden';
+            return;
+        }
         livesEl.textContent = '❤️'.repeat(lives);
     }
 
@@ -1056,7 +1118,10 @@
         modal.classList.remove('active');
         confirmResetModal.classList.remove('active');
         customizerModal.classList.remove('active');
+        
+        if (gameInterval) clearInterval(gameInterval);
         isPlaying = false;
+        isPracticeMode = false;
         isAnimating = false;
         
         score = 0;
@@ -1064,11 +1129,16 @@
         timeLeft = TOTAL_TIME;
         
         scoreEl.textContent = score;
+        setStaffPracticeVisuals(false);
         updateTimerBar(TOTAL_TIME);
         updateLivesDisplay();
         
         livesContainer.style.visibility = 'hidden';
         startBtn.style.display = 'flex';
+        
+        practiceBtn.innerHTML = '<span>Practice</span>';
+        practiceBtn.classList.remove('in-practice');
+        instructionsMain.textContent = "Correctly name as many notes as you can in 30 seconds!";
         
         disableButtons();
         noteGroup.innerHTML = '';
@@ -1086,8 +1156,10 @@
         lives = 3;
         timeLeft = TOTAL_TIME;
         isPlaying = true;
+        isPracticeMode = false;
         isAnimating = false;
         
+        setStaffPracticeVisuals(false);
         scoreEl.textContent = score;
         updateTimerBar(timeLeft);
         updateLivesDisplay();
@@ -1107,14 +1179,48 @@
         }, 1000);
     }
 
+    function startPractice() {
+        if (isPlaying && !isPracticeMode) {
+            clearInterval(gameInterval);
+        }
+        
+        initAudio();
+        modal.classList.remove('active');
+        confirmResetModal.classList.remove('active');
+        customizerModal.classList.remove('active');
+
+        isPlaying = true;
+        isPracticeMode = true;
+        isAnimating = false;
+        score = 0;
+
+        scoreEl.textContent = "—";
+        setStaffPracticeVisuals(true);
+        updateTimerBar(TOTAL_TIME);
+        livesContainer.style.visibility = 'hidden';
+        
+        startBtn.style.display = 'none';
+        practiceBtn.innerHTML = '<span>End Practice</span>';
+        practiceBtn.classList.add('in-practice');
+        instructionsMain.textContent = "Practice Mode active! Unlimited time and lives.";
+
+        resetButtons();
+        spawnNote();
+    }
+
     function endGame(status) {
-        clearInterval(gameInterval);
+        if (gameInterval) clearInterval(gameInterval);
         isPlaying = false;
         isAnimating = false;
         
         livesContainer.style.visibility = 'hidden';
         disableButtons();
         noteGroup.innerHTML = '';
+
+        if (isPracticeMode) {
+            resetToInitialState();
+            return;
+        }
 
         const isNewHighScore = checkAndUpdateHighScore(currentMode, score);
 
@@ -1159,7 +1265,7 @@
             line.setAttribute('y1', note.y);
             line.setAttribute('x2', x + 22);
             line.setAttribute('y2', note.y);
-            line.setAttribute('stroke', '#333');
+            line.setAttribute('stroke', isPracticeMode ? '#007bff' : '#333');
             line.setAttribute('stroke-width', '2');
             noteGroup.appendChild(line);
         }
@@ -1196,8 +1302,10 @@
 
         if (selectedNote === currentNote.name) {
             playSound('correct');
-            score++;
-            scoreEl.textContent = score;
+            if (!isPracticeMode) {
+                score++;
+                scoreEl.textContent = score;
+            }
 
             if (targetBtn) targetBtn.classList.add('btn-correct');
             
@@ -1207,8 +1315,11 @@
 
         } else {
             playSound('incorrect');
-            lives--;
-            updateLivesDisplay();
+            
+            if (!isPracticeMode) {
+                lives--;
+                updateLivesDisplay();
+            }
 
             if (targetBtn) {
                 targetBtn.classList.add('btn-incorrect');
@@ -1216,7 +1327,7 @@
             }
 
             shootSlingshot(currentNote.y, () => {
-                if (lives <= 0) {
+                if (!isPracticeMode && lives <= 0) {
                     endGame('gameover');
                 }
             }, true);
@@ -1238,8 +1349,12 @@
             activeNotes = filterNotesByMode(currentMode);
 
             if (isPlaying) {
-                clearInterval(gameInterval);
-                endGame('reset');
+                if (isPracticeMode) {
+                    spawnNote();
+                } else {
+                    clearInterval(gameInterval);
+                    endGame('reset');
+                }
             }
         });
     });
@@ -1268,13 +1383,22 @@
     });
 
     startBtn.addEventListener('click', startGame);
+
+    practiceBtn.addEventListener('click', () => {
+        if (isPracticeMode) {
+            resetToInitialState();
+        } else {
+            startPractice();
+        }
+    });
+
     modalReturnBtn.addEventListener('click', resetToInitialState);
     
     // Reset High Scores Handlers
     resetHighScoresBtn.addEventListener('click', () => {
         if (isPlaying) {
-            clearInterval(gameInterval);
-            endGame('reset');
+            if (gameInterval) clearInterval(gameInterval);
+            resetToInitialState();
         }
         confirmResetModal.classList.add('active');
     });
@@ -1288,8 +1412,8 @@
     // Customizer Modal Handlers
     customizeBtn.addEventListener('click', () => {
         if (isPlaying) {
-            clearInterval(gameInterval);
-            endGame('reset');
+            if (gameInterval) clearInterval(gameInterval);
+            resetToInitialState();
         }
         renderCustomizerOptions();
         customizerModal.classList.add('active');
