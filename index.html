@@ -29,7 +29,7 @@
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             text-align: center;
-            max-width: 520px;
+            max-width: 580px;
             width: 100%;
             display: flex;
             flex-direction: column;
@@ -562,6 +562,10 @@
                     <div class="high-score-tag">Best: <span id="hs-lines-spaces">0</span></div>
                 </div>
                 <div class="mode-card">
+                    <button class="mode-btn" data-mode="ledger-lines">Ledger Lines</button>
+                    <div class="high-score-tag">Best: <span id="hs-ledger-lines">0</span></div>
+                </div>
+                <div class="mode-card">
                     <button class="mode-btn active" data-mode="all">All</button>
                     <div class="high-score-tag">Best: <span id="hs-all">0</span></div>
                 </div>
@@ -838,19 +842,19 @@
     // Core Game Code & State
     const TOTAL_TIME = 30;
     const ALL_NOTES = [
-        { name: 'C', y: 140, ledger: true,  tags: ['all'] },              
-        { name: 'D', y: 130, ledger: false, tags: ['all'] },              
-        { name: 'E', y: 120, ledger: false, tags: ['all', 'lines', 'lines-spaces'] }, 
-        { name: 'F', y: 110, ledger: false, tags: ['all', 'spaces', 'lines-spaces'] },
-        { name: 'G', y: 100, ledger: false, tags: ['all', 'lines', 'lines-spaces'] }, 
-        { name: 'A', y: 90,  ledger: false, tags: ['all', 'spaces', 'lines-spaces'] },
-        { name: 'B', y: 80,  ledger: false, tags: ['all', 'lines', 'lines-spaces'] }, 
-        { name: 'C', y: 70,  ledger: false, tags: ['all', 'spaces', 'lines-spaces'] },
-        { name: 'D', y: 60,  ledger: false, tags: ['all', 'lines', 'lines-spaces'] }, 
-        { name: 'E', y: 50,  ledger: false, tags: ['all', 'spaces', 'lines-spaces'] },
-        { name: 'F', y: 40,  ledger: false, tags: ['all', 'lines', 'lines-spaces'] }, 
-        { name: 'G', y: 30,  ledger: false, tags: ['all'] },              
-        { name: 'A', y: 20,  ledger: true,  tags: ['all'] }               
+        { name: 'C', freq: 261.63, y: 140, ledger: true,  tags: ['all', 'ledger-lines'] }, // C4 (Middle C)
+        { name: 'D', freq: 293.66, y: 130, ledger: false, tags: ['all', 'ledger-lines'] }, // D4
+        { name: 'E', freq: 329.63, y: 120, ledger: false, tags: ['all', 'lines', 'lines-spaces'] }, // E4
+        { name: 'F', freq: 349.23, y: 110, ledger: false, tags: ['all', 'spaces', 'lines-spaces'] }, // F4
+        { name: 'G', freq: 392.00, y: 100, ledger: false, tags: ['all', 'lines', 'lines-spaces'] }, // G4
+        { name: 'A', freq: 440.00, y: 90,  ledger: false, tags: ['all', 'spaces', 'lines-spaces'] }, // A4
+        { name: 'B', freq: 493.88, y: 80,  ledger: false, tags: ['all', 'lines', 'lines-spaces'] }, // B4
+        { name: 'C', freq: 523.25, y: 70,  ledger: false, tags: ['all', 'spaces', 'lines-spaces'] }, // C5
+        { name: 'D', freq: 587.33, y: 60,  ledger: false, tags: ['all', 'lines', 'lines-spaces'] }, // D5
+        { name: 'E', freq: 659.25, y: 50,  ledger: false, tags: ['all', 'spaces', 'lines-spaces'] }, // E5
+        { name: 'F', freq: 698.46, y: 40,  ledger: false, tags: ['all', 'lines', 'lines-spaces'] }, // F5
+        { name: 'G', freq: 783.99, y: 30,  ledger: false, tags: ['all', 'ledger-lines'] }, // G5
+        { name: 'A', freq: 880.00, y: 20,  ledger: true,  tags: ['all', 'ledger-lines'] }  // A5
     ];
 
     let currentMode = 'all';
@@ -871,6 +875,7 @@
         'spaces': 0,
         'lines': 0,
         'lines-spaces': 0,
+        'ledger-lines': 0,
         'all': 0
     };
 
@@ -984,17 +989,17 @@
         const now = audioCtx.currentTime;
 
         if (type === 'correct') {
+            const pitchFreq = (currentNote && currentNote.freq) ? currentNote.freq : 523.25;
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.connect(gain);
             gain.connect(audioCtx.destination);
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(523.25, now);
-            osc.frequency.setValueAtTime(659.25, now + 0.08);
-            gain.gain.setValueAtTime(0.15, now);
-            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(pitchFreq, now);
+            gain.gain.setValueAtTime(0.25, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
             osc.start(now);
-            osc.stop(now + 0.25);
+            osc.stop(now + 0.4);
         } else if (type === 'incorrect') {
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
