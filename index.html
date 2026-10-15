@@ -12,16 +12,220 @@
         body {
             font-family: system-ui, -apple-system, sans-serif;
             display: flex;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar & Layout Styles */
+        .app-layout {
+            display: flex;
+            width: 100vw;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
-            margin: 0;
             padding: 1rem;
-            background-color: #f4f4f9;
-            color: #333;
+            transition: margin-right 0.3s ease;
         }
 
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -320px;
+            width: 320px;
+            height: 100vh;
+            background: #ffffff;
+            box-shadow: -4px 0 15px rgba(0,0,0,0.1);
+            transition: right 0.3s ease;
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem 1rem;
+        }
+
+        .sidebar.open {
+            right: 0;
+        }
+
+        .sidebar-toggle-btn {
+            position: absolute;
+            top: 20px;
+            left: -48px;
+            width: 48px;
+            height: 48px;
+            background: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 8px 0 0 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            box-shadow: -3px 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #2c3e50;
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 0.5rem;
+        }
+
+        /* Trophy Case Grid */
+        .trophy-case {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            overflow-y: auto;
+            padding: 0 0.5rem;
+        }
+
+        .trophy-row-top {
+            display: flex;
+            justify-content: center;
+        }
+
+        .trophy-row-bottom {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .trophy-spot {
+            background: #f8f9fa;
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            padding: 10px 6px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            min-height: 110px;
+            transition: all 0.3s ease;
+        }
+
+        .trophy-spot.big {
+            width: 100%;
+            max-width: 220px;
+            min-height: 140px;
+        }
+
+        /* Dynamic Unlocked Tier Styling */
+        .trophy-spot.unlocked {
+            border-style: solid;
+        }
+
+        .trophy-spot.unlocked-bronze {
+            border-color: #cd7f32;
+            background: #fcf4ec;
+        }
+
+        .trophy-spot.unlocked-silver {
+            border-color: #a0a0a0;
+            background: #f2f3f5;
+        }
+
+        .trophy-spot.unlocked-gold {
+            border-color: #f1c40f;
+            background: #fffdf0;
+        }
+
+        .trophy-icon {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 6px;
+            filter: grayscale(100%) opacity(0.25);
+            transition: filter 0.3s ease, transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .trophy-spot.big .trophy-icon {
+            width: 68px;
+            height: 68px;
+        }
+
+        .trophy-spot.unlocked .trophy-icon {
+            filter: grayscale(0%) opacity(1);
+            transform: scale(1.05);
+        }
+
+        .trophy-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #555;
+            margin-bottom: 2px;
+        }
+
+        .trophy-status {
+            font-size: 0.68rem;
+            color: #888;
+            font-weight: 600;
+        }
+
+        .trophy-spot.unlocked-bronze .trophy-status { color: #8c531b; }
+        .trophy-spot.unlocked-silver .trophy-status { color: #555555; }
+        .trophy-spot.unlocked-gold .trophy-status { color: #27ae60; }
+
+        /* Trophy Info Legend */
+        .trophy-info-box {
+            margin-top: auto;
+            padding-top: 1rem;
+            border-top: 2px solid #eee;
+            background: #fafafa;
+            border-radius: 8px;
+            padding: 0.75rem;
+            text-align: center;
+        }
+
+        .trophy-info-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #2c3e50;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .trophy-info-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #555;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .trophy-info-list li {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        /* Game Container Styles */
         .game-container {
             position: relative;
             background: white;
@@ -376,8 +580,28 @@
             font-size: 1rem;
             font-weight: bold;
             color: #28a745;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
             min-height: 1.5rem;
+        }
+
+        .modal-trophy-notice {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #d4ac0d;
+            margin-bottom: 0.75rem;
+            background: #fffdf0;
+            border: 1.5px solid #f1c40f;
+            padding: 6px 14px;
+            border-radius: 20px;
+        }
+
+        .modal-trophy-icon {
+            width: 28px;
+            height: 28px;
         }
 
         .modal-subtitle {
@@ -487,136 +711,200 @@
 </head>
 <body>
 
-<div class="game-container">
-    <div class="stats">
-        <div class="timer-section">
-            <div class="timer-label">Timer</div>
-            <div class="timer-bar-container">
-                <div id="timer-bar" class="timer-bar-fill"></div>
+<div class="app-layout">
+    <div class="main-content">
+        <div class="game-container">
+            <div class="stats">
+                <div class="timer-section">
+                    <div class="timer-label">Timer</div>
+                    <div class="timer-bar-container">
+                        <div id="timer-bar" class="timer-bar-fill"></div>
+                    </div>
+                </div>
+                <div class="game-title">Staff Master</div>
+                <div class="stat-item">Score: <span id="score">0</span></div>
             </div>
-        </div>
-        <div class="game-title">Staff Master</div>
-        <div class="stat-item">Score: <span id="score">0</span></div>
-    </div>
-    
-    <div id="lives-container" class="lives-container">Lives: <span id="lives">❤️❤️❤️</span></div>
-
-    <div id="staff-container">
-        <svg id="staff" viewBox="0 0 330 160" width="100%" height="100%">
-            <line class="staff-line" x1="20" y1="40" x2="230" y2="40" stroke-width="2"/>
-            <line class="staff-line" x1="20" y1="60" x2="230" y2="60" stroke-width="2"/>
-            <line class="staff-line" x1="20" y1="80" x2="230" y2="80" stroke-width="2"/>
-            <line class="staff-line" x1="20" y1="100" x2="230" y2="100" stroke-width="2"/>
-            <line class="staff-line" x1="20" y1="120" x2="230" y2="120" stroke-width="2"/>
             
-            <g id="note-group"></g>
+            <div id="lives-container" class="lives-container">Lives: <span id="lives">❤️❤️❤️</span></div>
 
-            <circle id="pebble" cx="284" cy="80" r="4" fill="#333" style="display: none;" />
+            <div id="staff-container">
+                <svg id="staff" viewBox="0 0 330 160" width="100%" height="100%">
+                    <line class="staff-line" x1="20" y1="40" x2="230" y2="40" stroke-width="2"/>
+                    <line class="staff-line" x1="20" y1="60" x2="230" y2="60" stroke-width="2"/>
+                    <line class="staff-line" x1="20" y1="80" x2="230" y2="80" stroke-width="2"/>
+                    <line class="staff-line" x1="20" y1="100" x2="230" y2="100" stroke-width="2"/>
+                    <line class="staff-line" x1="20" y1="120" x2="230" y2="120" stroke-width="2"/>
+                    
+                    <g id="note-group"></g>
 
-            <g id="main-character-svg" transform="translate(277, 45)"></g>
-        </svg>
-    </div>
+                    <circle id="pebble" cx="284" cy="80" r="4" fill="#333" style="display: none;" />
 
-    <div class="controls-area">
-        <div class="start-buttons-row">
-            <button id="start-btn">
-                <span>Start</span>
-                <span class="btn-subtext">Press Space</span>
-            </button>
-            <button id="practice-btn">
-                <span>Practice</span>
-            </button>
-            <button id="reset-game-btn">
-                <span>Reset</span>
-            </button>
-        </div>
+                    <g id="main-character-svg" transform="translate(277, 45)"></g>
+                </svg>
+            </div>
 
-        <div class="button-grid">
-            <button class="note-btn" data-note="A" disabled>A</button>
-            <button class="note-btn" data-note="B" disabled>B</button>
-            <button class="note-btn" data-note="C" disabled>C</button>
-            <button class="note-btn" data-note="D" disabled>D</button>
-            <button class="note-btn" data-note="E" disabled>E</button>
-            <button class="note-btn" data-note="F" disabled>F</button>
-            <button class="note-btn" data-note="G" disabled>G</button>
-        </div>
-
-        <div class="instructions-group">
-            <p id="instructions-main" class="instructions-main">Correctly name as many notes as you can in 30 seconds!</p>
-            <p class="instructions">Click the buttons or press keys <strong>A–G</strong> on your keyboard.</p>
-        </div>
-
-        <div class="mode-container">
-            <div class="mode-label">Select Game Mode</div>
-            <div class="mode-row">
-                <div class="mode-card">
-                    <button class="mode-btn" data-mode="spaces">Spaces Only</button>
-                    <div class="high-score-tag">Best: <span id="hs-spaces">0</span></div>
+            <div class="controls-area">
+                <div class="start-buttons-row">
+                    <button id="start-btn">
+                        <span>Start</span>
+                        <span class="btn-subtext">Press Space</span>
+                    </button>
+                    <button id="practice-btn">
+                        <span>Practice</span>
+                    </button>
+                    <button id="reset-game-btn">
+                        <span>Reset</span>
+                    </button>
                 </div>
-                <div class="mode-card">
-                    <button class="mode-btn" data-mode="lines">Lines Only</button>
-                    <div class="high-score-tag">Best: <span id="hs-lines">0</span></div>
+
+                <div class="button-grid">
+                    <button class="note-btn" data-note="A" disabled>A</button>
+                    <button class="note-btn" data-note="B" disabled>B</button>
+                    <button class="note-btn" data-note="C" disabled>C</button>
+                    <button class="note-btn" data-note="D" disabled>D</button>
+                    <button class="note-btn" data-note="E" disabled>E</button>
+                    <button class="note-btn" data-note="F" disabled>F</button>
+                    <button class="note-btn" data-note="G" disabled>G</button>
                 </div>
-                <div class="mode-card">
-                    <button class="mode-btn" data-mode="lines-spaces">Lines & Spaces</button>
-                    <div class="high-score-tag">Best: <span id="hs-lines-spaces">0</span></div>
+
+                <div class="instructions-group">
+                    <p id="instructions-main" class="instructions-main">Correctly name as many notes as you can in 30 seconds!</p>
+                    <p class="instructions">Click the buttons or press keys <strong>A–G</strong> on your keyboard.</p>
                 </div>
-                <div class="mode-card">
-                    <button class="mode-btn" data-mode="ledger-lines">Ledger Lines</button>
-                    <div class="high-score-tag">Best: <span id="hs-ledger-lines">0</span></div>
+
+                <div class="mode-container">
+                    <div class="mode-label">Select Game Mode</div>
+                    <div class="mode-row">
+                        <div class="mode-card">
+                            <button class="mode-btn" data-mode="spaces">Spaces Only</button>
+                            <div class="high-score-tag">Best: <span id="hs-spaces">0</span></div>
+                        </div>
+                        <div class="mode-card">
+                            <button class="mode-btn" data-mode="lines">Lines Only</button>
+                            <div class="high-score-tag">Best: <span id="hs-lines">0</span></div>
+                        </div>
+                        <div class="mode-card">
+                            <button class="mode-btn" data-mode="lines-spaces">Lines & Spaces</button>
+                            <div class="high-score-tag">Best: <span id="hs-lines-spaces">0</span></div>
+                        </div>
+                        <div class="mode-card">
+                            <button class="mode-btn" data-mode="ledger-lines">Ledger Lines</button>
+                            <div class="high-score-tag">Best: <span id="hs-ledger-lines">0</span></div>
+                        </div>
+                        <div class="mode-card">
+                            <button class="mode-btn active" data-mode="all">All</button>
+                            <div class="high-score-tag">Best: <span id="hs-all">0</span></div>
+                        </div>
+                    </div>
                 </div>
-                <div class="mode-card">
-                    <button class="mode-btn active" data-mode="all">All</button>
-                    <div class="high-score-tag">Best: <span id="hs-all">0</span></div>
+                
+                <div class="action-buttons-row">
+                    <button id="customize-btn" class="secondary-btn">Customize Character</button>
+                    <button id="reset-high-scores-btn" class="secondary-btn reset-score-btn">Reset High Scores</button>
                 </div>
             </div>
+
+            <div id="game-modal" class="modal-overlay">
+                <div id="modal-char-box" class="modal-character-box"></div>
+                <div id="modal-title" class="modal-title">Game Over!</div>
+                <div id="modal-score" class="modal-score">Final Score: 0</div>
+                <div id="modal-highscore-notice" class="modal-highscore-notice"></div>
+                <div id="modal-trophy-notice" class="modal-trophy-notice" style="display: none;"></div>
+                <button id="modal-return-btn" class="modal-btn" style="background:#28a745;">Return</button>
+            </div>
+
+            <div id="confirm-reset-modal" class="modal-overlay">
+                <div class="modal-title">Reset High Scores?</div>
+                <div class="modal-subtitle">Are you sure you want to reset your high scores? This can't be undone.</div>
+                <div class="modal-actions">
+                    <button id="reset-cancel-btn" class="modal-btn modal-btn-cancel">Cancel</button>
+                    <button id="reset-confirm-btn" class="modal-btn modal-btn-confirm">Reset</button>
+                </div>
+            </div>
+
+            <div id="customizer-modal" class="modal-overlay">
+                <div class="modal-title" style="font-size: 1.4rem; margin-bottom: 0.5rem;">Customize Character</div>
+                <div class="customizer-body">
+                    <div class="customizer-preview">
+                        <svg id="customizer-svg-preview" viewBox="0 0 100 120" width="100%" height="100%"></svg>
+                    </div>
+                    
+                    <div class="customizer-tabs">
+                        <button class="custom-tab-btn active" data-tab="head">Headwear</button>
+                        <button class="custom-tab-btn" data-tab="skin">Skin</button>
+                        <button class="custom-tab-btn" data-tab="shirt">Shirt</button>
+                        <button class="custom-tab-btn" data-tab="pants">Pants</button>
+                        <button class="custom-tab-btn" data-tab="shoes">Shoes</button>
+                    </div>
+
+                    <div id="customizer-options-container" class="customizer-options"></div>
+                </div>
+                <button id="customizer-close-btn" class="modal-btn" style="margin-top: 1rem; padding: 6px 20px; font-size: 1rem; background:#28a745;">Done</button>
+            </div>
         </div>
+    </div>
+
+    <!-- Collapsible Sidebar Trophy Case -->
+    <aside id="sidebar" class="sidebar">
+        <button id="sidebar-toggle-btn" class="sidebar-toggle-btn" title="Toggle Trophy Case">🏆</button>
+        <div class="sidebar-title">Trophy Case</div>
         
-        <div class="action-buttons-row">
-            <button id="customize-btn" class="secondary-btn">Customize Character</button>
-            <button id="reset-high-scores-btn" class="secondary-btn reset-score-btn">Reset High Scores</button>
-        </div>
-    </div>
-
-    <div id="game-modal" class="modal-overlay">
-        <div id="modal-char-box" class="modal-character-box"></div>
-        <div id="modal-title" class="modal-title">Game Over!</div>
-        <div id="modal-score" class="modal-score">Final Score: 0</div>
-        <div id="modal-highscore-notice" class="modal-highscore-notice"></div>
-        <button id="modal-return-btn" class="modal-btn" style="background:#28a745;">Return</button>
-    </div>
-
-    <div id="confirm-reset-modal" class="modal-overlay">
-        <div class="modal-title">Reset High Scores?</div>
-        <div class="modal-subtitle">Are you sure you want to reset your high scores? This can't be undone.</div>
-        <div class="modal-actions">
-            <button id="reset-cancel-btn" class="modal-btn modal-btn-cancel">Cancel</button>
-            <button id="reset-confirm-btn" class="modal-btn modal-btn-confirm">Reset</button>
-        </div>
-    </div>
-
-    <div id="customizer-modal" class="modal-overlay">
-        <div class="modal-title" style="font-size: 1.4rem; margin-bottom: 0.5rem;">Customize Character</div>
-        <div class="customizer-body">
-            <div class="customizer-preview">
-                <svg id="customizer-svg-preview" viewBox="0 0 100 120" width="100%" height="100%"></svg>
-            </div>
-            
-            <div class="customizer-tabs">
-                <button class="custom-tab-btn active" data-tab="head">Headwear</button>
-                <button class="custom-tab-btn" data-tab="skin">Skin</button>
-                <button class="custom-tab-btn" data-tab="shirt">Shirt</button>
-                <button class="custom-tab-btn" data-tab="pants">Pants</button>
-                <button class="custom-tab-btn" data-tab="shoes">Shoes</button>
+        <div class="trophy-case">
+            <!-- Top Row: Big Trophy for "All" -->
+            <div class="trophy-row-top">
+                <div id="trophy-spot-all" class="trophy-spot big">
+                    <div id="trophy-icon-all" class="trophy-icon"></div>
+                    <div class="trophy-label">All</div>
+                    <div id="trophy-status-all" class="trophy-status">Locked</div>
+                </div>
             </div>
 
-            <div id="customizer-options-container" class="customizer-options"></div>
+            <!-- Bottom Row: 4 Game Modes -->
+            <div class="trophy-row-bottom">
+                <div id="trophy-spot-lines" class="trophy-spot">
+                    <div id="trophy-icon-lines" class="trophy-icon"></div>
+                    <div class="trophy-label">Lines Only</div>
+                    <div id="trophy-status-lines" class="trophy-status">Locked</div>
+                </div>
+                <div id="trophy-spot-spaces" class="trophy-spot">
+                    <div id="trophy-icon-spaces" class="trophy-icon"></div>
+                    <div class="trophy-label">Spaces Only</div>
+                    <div id="trophy-status-spaces" class="trophy-status">Locked</div>
+                </div>
+                <div id="trophy-spot-lines-spaces" class="trophy-spot">
+                    <div id="trophy-icon-lines-spaces" class="trophy-icon"></div>
+                    <div class="trophy-label">Lines & Spaces</div>
+                    <div id="trophy-status-lines-spaces" class="trophy-status">Locked</div>
+                </div>
+                <div id="trophy-spot-ledger-lines" class="trophy-spot">
+                    <div id="trophy-icon-ledger-lines" class="trophy-icon"></div>
+                    <div class="trophy-label">Ledger Lines</div>
+                    <div id="trophy-status-ledger-lines" class="trophy-status">Locked</div>
+                </div>
+            </div>
+
+            <!-- Trophy Requirements Legend -->
+            <div class="trophy-info-box">
+                <div class="trophy-info-title">Earn Trophies</div>
+                <ul class="trophy-info-list">
+                    <li><span>5 points</span> - <span>Bronze</span></li>
+                    <li><span>10 points</span> - <span>Silver</span></li>
+                    <li><span>15 points</span> - <span>Gold</span></li>
+                </ul>
+            </div>
         </div>
-        <button id="customizer-close-btn" class="modal-btn" style="margin-top: 1rem; padding: 6px 20px; font-size: 1rem; background:#28a745;">Done</button>
-    </div>
+    </aside>
 </div>
 
 <script>
+    // Sidebar Toggle
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggleBtn = document.getElementById('sidebar-toggle-btn');
+
+    sidebarToggleBtn.addEventListener('click', () => {
+        sidebar.classList.toggle('open');
+    });
+
     // Asset Palette Options
     const CUSTOM_OPTIONS = {
         skin: [
@@ -680,7 +968,7 @@
         renderAllCharacters();
     }
 
-    // Helper SVG Headwear Builders - Raised vertically so eyes remain uncovered
+    // Helper SVG Headwear Builders
     function getHeadwearSVG(headId, isPreview = false, pose = 'normal') {
         if (headId === 0) { // Backwards Cap
             if (isPreview || pose !== 'normal') {
@@ -786,6 +1074,45 @@
                 <path d="M 52 21 Q 55 17 59 21" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round" />
                 <path d="M 42 27 Q 50 37 58 27 Z" fill="#e74c3c" stroke="#333" stroke-width="1.5" />
                 ${headSVG}
+            </svg>
+        `;
+    }
+
+    function generateTrophySVG(tier) {
+        let primaryColor = '#a0a0a0';
+        let secondaryColor = '#808080';
+        let accentColor = '#c0c0c0';
+
+        if (tier === 'bronze') {
+            primaryColor = '#cd7f32';
+            secondaryColor = '#8c531b';
+            accentColor = '#e39a52';
+        } else if (tier === 'gold') {
+            primaryColor = '#f1c40f';
+            secondaryColor = '#d4ac0d';
+            accentColor = '#f9e79f';
+        } else if (tier === 'locked') {
+            primaryColor = '#b0b0b0';
+            secondaryColor = '#808080';
+            accentColor = '#d0d0d0';
+        }
+
+        return `
+            <svg viewBox="0 0 64 64" width="100%" height="100%">
+                <!-- Base -->
+                <rect x="18" y="52" width="28" height="6" rx="2" fill="${secondaryColor}" />
+                <rect x="22" y="46" width="20" height="6" rx="1" fill="${primaryColor}" />
+                <!-- Stem -->
+                <rect x="28" y="38" width="8" height="8" fill="${secondaryColor}" />
+                <!-- Cup Handles -->
+                <path d="M 12 16 C 4 16 4 30 16 30 L 16 26 C 8 26 8 20 16 20 Z" fill="${secondaryColor}" />
+                <path d="M 52 16 C 60 16 60 30 48 30 L 48 26 C 56 26 56 20 48 20 Z" fill="${secondaryColor}" />
+                <!-- Cup Body -->
+                <path d="M 14 10 L 50 10 L 44 32 C 40 38 24 38 20 32 Z" fill="${primaryColor}" />
+                <!-- Inner Cup Highlight -->
+                <path d="M 18 12 L 46 12 L 42 30 C 38 35 26 35 22 30 Z" fill="${accentColor}" opacity="0.4" />
+                <!-- Rim -->
+                <ellipse cx="32" cy="10" rx="18" ry="3" fill="${accentColor}" />
             </svg>
         `;
     }
@@ -901,6 +1228,7 @@
     const modalTitle = document.getElementById('modal-title');
     const modalScore = document.getElementById('modal-score');
     const modalHighscoreNotice = document.getElementById('modal-highscore-notice');
+    const modalTrophyNotice = document.getElementById('modal-trophy-notice');
     const modalReturnBtn = document.getElementById('modal-return-btn');
 
     const confirmResetModal = document.getElementById('confirm-reset-modal');
@@ -947,6 +1275,7 @@
             } catch (e) {}
         }
         updateHighScoreUI();
+        updateTrophyCaseUI();
     }
 
     function updateHighScoreUI() {
@@ -958,15 +1287,71 @@
         });
     }
 
+    // Dynamic Trophy Case SVG & Spot Colors
+    function updateTrophyCaseUI() {
+        const modes = ['lines', 'spaces', 'lines-spaces', 'ledger-lines', 'all'];
+
+        modes.forEach(mode => {
+            const best = highScores[mode] || 0;
+            const spotEl = document.getElementById(`trophy-spot-${mode}`);
+            const iconEl = document.getElementById(`trophy-icon-${mode}`);
+            const statusEl = document.getElementById(`trophy-status-${mode}`);
+
+            if (!spotEl || !iconEl || !statusEl) return;
+
+            spotEl.classList.remove('unlocked', 'unlocked-bronze', 'unlocked-silver', 'unlocked-gold');
+
+            let tier = 'locked';
+            if (best >= 15) {
+                tier = 'gold';
+                spotEl.classList.add('unlocked', 'unlocked-gold');
+                statusEl.textContent = 'Gold (15+)';
+            } else if (best >= 10) {
+                tier = 'silver';
+                spotEl.classList.add('unlocked', 'unlocked-silver');
+                statusEl.textContent = 'Silver (10+)';
+            } else if (best >= 5) {
+                tier = 'bronze';
+                spotEl.classList.add('unlocked', 'unlocked-bronze');
+                statusEl.textContent = 'Bronze (5+)';
+            } else {
+                statusEl.textContent = 'Locked';
+            }
+
+            iconEl.innerHTML = generateTrophySVG(tier);
+        });
+    }
+
+    function getTrophyTier(score) {
+        if (score >= 15) return 'gold';
+        if (score >= 10) return 'silver';
+        if (score >= 5) return 'bronze';
+        return null;
+    }
+
     function checkAndUpdateHighScore(currentMode, score) {
-        if (isPracticeMode) return false;
-        if (score > highScores[currentMode]) {
+        if (isPracticeMode) return { isNewHighScore: false, newTrophyTier: null };
+        const previousBest = highScores[currentMode] || 0;
+        let isNewHighScore = false;
+        let newTrophyTier = null;
+
+        if (score > previousBest) {
             highScores[currentMode] = score;
             localStorage.setItem('note_game_highscores', JSON.stringify(highScores));
             updateHighScoreUI();
-            return true;
+            updateTrophyCaseUI();
+            isNewHighScore = true;
+
+            const previousTier = getTrophyTier(previousBest);
+            const currentTier = getTrophyTier(score);
+
+            // Award trophy notification if player advanced to a new tier
+            if (currentTier && currentTier !== previousTier) {
+                newTrophyTier = currentTier;
+            }
         }
-        return false;
+
+        return { isNewHighScore, newTrophyTier };
     }
 
     function performResetHighScores() {
@@ -975,6 +1360,7 @@
         });
         localStorage.removeItem('note_game_highscores');
         updateHighScoreUI();
+        updateTrophyCaseUI();
         confirmResetModal.classList.remove('active');
     }
 
@@ -1251,7 +1637,16 @@
             return;
         }
 
-        const isNewHighScore = checkAndUpdateHighScore(currentMode, score);
+        const { isNewHighScore, newTrophyTier } = checkAndUpdateHighScore(currentMode, score);
+
+        // Display or hide trophy unlock notice
+        if (newTrophyTier) {
+            const tierName = newTrophyTier.charAt(0).toUpperCase() + newTrophyTier.slice(1);
+            modalTrophyNotice.innerHTML = `<div class="modal-trophy-icon">${generateTrophySVG(newTrophyTier)}</div> Earned a ${tierName} Trophy!`;
+            modalTrophyNotice.style.display = 'flex';
+        } else {
+            modalTrophyNotice.style.display = 'none';
+        }
 
         if (status === "victory") {
             playSound('victory');
